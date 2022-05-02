@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
         service.getAccessToken(requestBody).enqueue(new Callback<ResponseBody>() {
                                                         @Override
+                                                        // Siguiente try: Cambiar Response<ResponseBody> a Response<AccessToken>
                                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                                             ResponseBody accessToken = response.body();
-                                                            accessToken.charStream();
                                                             try {
                                                                 textViewResponse.setText(accessToken.string());
                                                             } catch (IOException e) {
