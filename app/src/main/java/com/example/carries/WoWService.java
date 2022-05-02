@@ -7,12 +7,9 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface WoWService {
+    // https://us.battle.net/oauth/token
+    @POST("token")
+    Call<AccessToken> getAccessToken(@Query("client_id") String clientId, @Query("client_secret") String clientSecret,
+                                     @Query("grant_type") String grantType);
 
-    public interface GitHubService {
-
-        // https://us.battle.net/oauth/token
-        @POST("token")
-        Call<AccessToken> getAccessToken(@Query("client_id") String clientId, @Query("client_secret") String clientSecret,
-                                         @Query("grant_type") String grantType);
-    }
 }
