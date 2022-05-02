@@ -6,16 +6,11 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.carries.models.AccessToken;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
-
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,26 +24,53 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TextView textViewResponse = findViewById(R.id.textViewResponse);
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://us.battle.net/oauth/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("client_id", "fa75ca71e373400b9ed4c4c8c8c8c5b4")
+                .addFormDataPart("client_secret", "xUEWjNdGp2ERMt6UI3UDlIvc7rwPCf7J")
+                .addFormDataPart("grant_type", "client_credentials")
+                .build();
+
         WoWService service = retrofit.create(WoWService.class);
 
-        Call<AccessToken> accessTokenCall = service.getAccessToken("fa75ca71e373400b9ed4c4c8c8c8c5b4", "xUEWjNdGp2ERMt6UI3UDlIvc7rwPCf7J",
-                "client_credentials");
+        service.getAccessToken(requestBody).enqueue(new Callback<ResponseBody>() {
+                                                        @Override
+                                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                            ResponseBody accessToken = response.body();
+                                                            accessToken.charStream();
+                                                            try {
+                                                                textViewResponse.setText(accessToken.string());
+                                                            } catch (IOException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
 
-        accessTokenCall.enqueue(new Callback<AccessToken>() {
-            @Override
-            public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                AccessToken accessToken = response.body();
-            }
+                                                        @Override
+                                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                                            Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+        );
 
-            @Override
-            public void onFailure(Call<AccessToken> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        Call<AccessToken> accessTokenCall = service.getAccessToken(accessToken);
+//
+//        accessTokenCall.enqueue(new Callback<AccessToken>() {
+//            @Override
+//            public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
+//                AccessToken accessToken = response.body();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<AccessToken> call, Throwable t) {
+//                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 }

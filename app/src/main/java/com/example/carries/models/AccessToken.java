@@ -2,12 +2,14 @@ package com.example.carries.models;
 
 public class AccessToken {
 
+
     private String token, tokenType, scope;
     private int expiresIn;
 
+    //("fa75ca71e373400b9ed4c4c8c8c8c5b4", "xUEWjNdGp2ERMt6UI3UDlIvc7rwPCf7J",
+    ////                "client_credentials");
     public AccessToken() {
     }
-
     public AccessToken(String token, String tokenType, String scope, int expiresIn) {
         this.token = token;
         this.tokenType = tokenType;
