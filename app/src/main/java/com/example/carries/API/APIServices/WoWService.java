@@ -1,4 +1,4 @@
-package com.example.carries;
+package com.example.carries.API.APIServices;
 
 import com.example.carries.models.AccessToken;
 
@@ -11,12 +11,6 @@ import retrofit2.http.Query;
 
 public interface WoWService {
     // https://us.battle.net/oauth/token
-//    @POST("token")
-//    Call<AccessToken> getAccessToken(@Query("client_id") String clientId, @Query("client_secret") String clientSecret,
-//                                     @Query("grant_type") String grantType);
-
-    //@POST("somePostMethod")
-    //Call<ResponseBody> somePostMethod(@Body RequestBody body);
     @POST("token")
     Call<ResponseBody> getAccessToken(@Body RequestBody body);
 }
