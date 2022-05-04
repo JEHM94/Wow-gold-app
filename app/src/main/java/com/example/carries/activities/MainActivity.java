@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.carries.API.API;
 import com.example.carries.API.APIServices.WoWService;
 import com.example.carries.R;
 import com.example.carries.constants.Constants;
@@ -32,44 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textViewResponse = findViewById(R.id.textViewResponse);
 
+        API.getAccessToken(textViewResponse);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://us.battle.net/oauth/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("client_id", Constants.client_id)
-                .addFormDataPart("client_secret", Constants.client_secret)
-                .addFormDataPart("grant_type", Constants.grant_type)
-                .build();
-
-        WoWService service = retrofit.create(WoWService.class);
-
-        service.getAccessToken(requestBody)
-                .enqueue(new Callback<ResponseBody>() {
-                             @Override
-                             // Siguiente try: Cambiar Response<ResponseBody> a Response<AccessToken>
-                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                 ResponseBody responseBody = response.body();
-                                 try {
-                                     //textViewResponse.setText(responseBody.string());
-                                     Gson gson = new Gson();
-                                     AccessToken accessToken = gson.fromJson(responseBody.string(), AccessToken.class);
-                                     String tokenInfo = "Token: " + accessToken.getAccess_token() + " / " +
-                                             "Token type: " + accessToken.getToken_type() + " / " + "Expires in: " + accessToken.getExpires_in();
-                                     textViewResponse.setText(tokenInfo);
-                                 } catch (IOException e) {
-                                     e.printStackTrace();
-                                 }
-                             }
-
-                             @Override
-                             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                 Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
-                             }
-                         }
-                );
     }
 }
