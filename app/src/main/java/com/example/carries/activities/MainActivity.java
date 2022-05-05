@@ -32,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TextView textViewResponse = findViewById(R.id.textViewResponse);
-
-        API.getAccessToken(textViewResponse);
+        //SplashActivity.getAccessToken(textViewResponse);
 
     }
 }
