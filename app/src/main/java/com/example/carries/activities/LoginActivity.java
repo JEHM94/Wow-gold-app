@@ -20,8 +20,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("token", "");
-        Toast.makeText(LoginActivity.this, token, Toast.LENGTH_SHORT).show();
+//        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+//        String token = sharedPreferences.getString("token", "");
+//        Toast.makeText(LoginActivity.this, token, Toast.LENGTH_SHORT).show();
     }
 }
