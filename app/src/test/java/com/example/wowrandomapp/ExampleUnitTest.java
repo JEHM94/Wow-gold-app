@@ -1,4 +1,4 @@
-package com.example.carries;
+package com.example.wowrandomapp;
 
 import org.junit.Test;
 

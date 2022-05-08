@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Carries</string>
+    <string name="app_name">WoW Random App</string>
+    <string name="login_button">LOGIN WITH BATTLE.NET</string>
 </resources>

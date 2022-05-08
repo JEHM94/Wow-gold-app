@@ -1,4 +1,4 @@
-package com.example.carries.models;
+package com.example.wowrandomapp.models;
 
 public class AccessToken {
 

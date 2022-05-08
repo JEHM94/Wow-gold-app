@@ -1,4 +1,9 @@
-package com.example.carries.activities;
+package com.example.wowrandomapp.activities;
+
+import static com.example.wowrandomapp.constants.Constants.ACCESS_TOKEN_URL;
+import static com.example.wowrandomapp.constants.Constants.CLIENT_ID;
+import static com.example.wowrandomapp.constants.Constants.CLIENT_SECRET;
+import static com.example.wowrandomapp.constants.Constants.GRANT_TYPE;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,17 +11,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.carries.API.API;
-import com.example.carries.API.APIServices.WoWService;
-import com.example.carries.R;
-import com.example.carries.constants.Constants;
-import com.example.carries.models.AccessToken;
+import com.example.wowrandomapp.API.API;
+import com.example.wowrandomapp.API.APIServices.WoWService;
+import com.example.wowrandomapp.models.AccessToken;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import wowrandomapp.R;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -98,12 +100,12 @@ public class SplashActivity extends AppCompatActivity {
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("client_id", Constants.CLIENT_ID)
-                .addFormDataPart("client_secret", Constants.CLIENT_SECRET)
-                .addFormDataPart("grant_type", Constants.GRANT_TYPE)
+                .addFormDataPart("client_id", CLIENT_ID)
+                .addFormDataPart("client_secret", CLIENT_SECRET)
+                .addFormDataPart("grant_type", GRANT_TYPE)
                 .build();
 
-        WoWService service = API.getRetrofit().create(WoWService.class);
+        WoWService service = API.getRetrofit(ACCESS_TOKEN_URL).create(WoWService.class);
 
         service.getAccessToken(requestBody)
                 .enqueue(new Callback<ResponseBody>() {

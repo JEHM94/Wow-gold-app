@@ -1,4 +1,4 @@
-package com.example.carries;
+package com.example.wowrandomapp;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.carries", appContext.getPackageName());
+        assertEquals("com.example.wowrandomapp", appContext.getPackageName());
     }
 }
