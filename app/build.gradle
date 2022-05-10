@@ -3,10 +3,18 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        re {
+            storeFile file('F:\\Old\\AndroidStudioProjects\\Nuevo\\jehm.jks')
+            storePassword '3557025'
+            keyAlias 'key'
+            keyPassword '3557025'
+        }
+    }
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.wowrandomapp"
+        applicationId "com.jehm.wowrandomapp"
         minSdk 21
         targetSdk 32
         versionCode 1
@@ -25,6 +33,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'com.jehm.wowrandomapp'
 }
 
 dependencies {
