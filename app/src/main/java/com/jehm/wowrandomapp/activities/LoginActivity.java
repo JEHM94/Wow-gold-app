@@ -7,6 +7,7 @@ import static com.jehm.wowrandomapp.constants.Constants.REDIRECT_URI;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -19,7 +20,6 @@ import com.jehm.wowrandomapp.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button buttonLogin;
     private static SharedPreferences sharedPreferences;
 
     @Override
@@ -27,13 +27,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        Button buttonLogin = (Button) findViewById(R.id.buttonLogin);
         buttonLogin.setOnClickListener(this);
-//        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-//        String token = sharedPreferences.getString("token", "");
-//        Toast.makeText(LoginActivity.this, token, Toast.LENGTH_SHORT).show();
-        //getAuthCode();
+
         getAuthCode();
+    }
+
+    private static void saveOnPreferences(String authCode) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("authCode", authCode);
+        editor.commit();
     }
 
     @Override
@@ -45,10 +49,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void getAuthCode() {
         Intent appLinkIntent = getIntent();
-        String appLinkAction = appLinkIntent.getAction();
         Uri appLinkData = appLinkIntent.getData();
-        if(appLinkData != null ){
-            buttonLogin.setText(appLinkData.toString());
+        if (appLinkData != null) {
+            String codeResponse = appLinkData.getQueryParameter("code");
+            String stateResponse = appLinkData.getQueryParameter("state");
+            if (!codeResponse.isEmpty() && stateResponse.equals(LOGIN_STATE)) {
+                saveOnPreferences(codeResponse);
+                Intent intent = new Intent(this, MainActivity.class);
+                // FLAGS PARA EVITAR QUE EL USUARIO REGRESE CON EL BOTÓN ATRÁS
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
         }
     }
 
@@ -63,13 +74,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 + "&scope=wow.profile"
                 + "&state=" + LOGIN_STATE
                 + "&response_type=code"
-                + "&redirect_uri="+ REDIRECT_URI;
+                + "&redirect_uri=" + REDIRECT_URI;
 
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(loginURL));
         startActivity(intent);
-    }
-
-    private void getAuthorizeCode() {
-
     }
 }

@@ -12,16 +12,17 @@
         android:theme="@style/Theme.Carries">
         <activity
             android:name="com.jehm.wowrandomapp.activities.SplashActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.jehm.wowrandomapp.activities.LoginActivity"
-            android:exported="true"
-            android:launchMode="singleTop">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.jehm.wowrandomapp.activities.LoginActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -29,8 +30,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
-                    android:host="jehm94.github.io" />
+                    android:host="jehm94.github.io"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity

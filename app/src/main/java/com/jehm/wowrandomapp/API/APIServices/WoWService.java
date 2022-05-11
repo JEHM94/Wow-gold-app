@@ -15,10 +15,10 @@ public interface WoWService {
     @POST("token")
     Call<ResponseBody> getAccessToken(@Body RequestBody body);
 
-    @GET("authorize")
-    Call<AuthorizeCode> getAuthorizeCode(@Query("client_id") String client_id,
-                                         @Query("scope") String scope,
-                                         @Query("state") String state,
-                                         @Query("response_type") String response_type,
-                                         @Query("redirect_uri") String redirect_uri);
+    //https://us.api.blizzard.com/data/wow/token/
+    // index?namespace=dynamic-us&locale=en_US&access_token=USU3vnnBeHYReiBefPweK0dBbox8LK8qDR
+    @GET("index")
+    Call<String> getWowTokenPrice(@Query("namespace") String namespace,
+                                  @Query("locale") String locale,
+                                  @Query("access_token") String access_token);
 }

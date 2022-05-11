@@ -11,9 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.os.SystemClock;
 
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
@@ -34,9 +32,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private static SharedPreferences sharedPreferences;
 
-    private TextView textView;
-    private Button button;
-
     private static final String GO_LOGIN = "0";
     private static final String GO_MAIN = "1";
 
@@ -45,28 +40,22 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        button = (Button) findViewById(R.id.buttonSplash);
-        textView = (TextView) findViewById(R.id.textViewSplash);
-
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         String token = sharedPreferences.getString("token", "");
+        String authCode = sharedPreferences.getString("authCode", "");
 
-        if (!token.isEmpty()) {
+        if (!token.isEmpty() && !authCode.isEmpty()) {
             redirect(GO_MAIN);
-        } else { //Agregar else if cuando se tenga el token del permiso
-            getAccessToken(textView, SplashActivity.this);
+        } else if (!token.isEmpty()) {
+            redirect(GO_LOGIN);
+        } else {
+            getAccessToken();
             redirect(GO_LOGIN);
         }
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getAccessToken(textView, SplashActivity.this);
-                redirect(GO_LOGIN);
-            }
-        });
-
+        SystemClock.sleep(3000);
+        //Destruye la instancia del activity para no volver
+        finish();
     }
 
     private static void saveOnPreferences(String token, String token_type, int expires_in) {
@@ -92,11 +81,7 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void goMain() {
-
-    }
-
-    public static void getAccessToken(TextView textViewResponse, Context context) {
+    public static void getAccessToken() {
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -120,20 +105,11 @@ public class SplashActivity extends AppCompatActivity {
                                      } catch (IOException e) {
                                          e.printStackTrace();
                                      }
-//                                 String tokenInfo = "Token: " + accessToken.getAccess_token() + " / " +
-//                                         "Token type: " + accessToken.getToken_type() + " / "
-//                                         + "Expires in: " + accessToken.getExpires_in();
-//                                 textViewResponse.setText(tokenInfo);
                                      String token = accessToken.getAccess_token();
                                      String token_type = accessToken.getToken_type();
                                      int expires_in = accessToken.getExpires_in();
                                      saveOnPreferences(token, token_type, expires_in);
-
-
-                                 }/* else {
-                                     Toast.makeText(context, "Something bad happened :(", Toast.LENGTH_SHORT).show();
-                                 }*/
-                                 // Manejar el siguiente Request desde aquí
+                                 }
                              }
 
                              @Override
