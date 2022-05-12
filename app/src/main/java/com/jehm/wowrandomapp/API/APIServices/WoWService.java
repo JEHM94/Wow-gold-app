@@ -1,6 +1,7 @@
 package com.jehm.wowrandomapp.API.APIServices;
 
 import com.jehm.wowrandomapp.models.AuthorizeCode;
+import com.jehm.wowrandomapp.models.WowToken;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -17,8 +18,8 @@ public interface WoWService {
 
     //https://us.api.blizzard.com/data/wow/token/
     // index?namespace=dynamic-us&locale=en_US&access_token=USU3vnnBeHYReiBefPweK0dBbox8LK8qDR
-    @GET("index")
-    Call<String> getWowTokenPrice(@Query("namespace") String namespace,
-                                  @Query("locale") String locale,
-                                  @Query("access_token") String access_token);
+    @GET("data/wow/token/index")
+    Call<WowToken> getWowTokenPrice(@Query("namespace") String namespace,
+                                    @Query("locale") String locale,
+                                    @Query("access_token") String access_token);
 }

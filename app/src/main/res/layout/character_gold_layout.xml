@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageViewGold"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:contentDescription="@string/WowTokenImage"
+            android:paddingStart="5dp"
+            android:src="@mipmap/gold_icon_f" />
+
+        <TextView
+            android:id="@+id/textViewGold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="65"
+            android:text="154,305"
+            android:textColor="@color/loginButton"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+            <!--Para oro > 999,999
+            android:layout_weight="80"
+            android:textSize="12sp"-->
+
+
+
+        <ImageView
+            android:id="@+id/imageViewSilver"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:contentDescription="@string/WowTokenImage"
+            android:paddingStart="5dp"
+            android:src="@mipmap/silver_icon_f" />
+
+        <TextView
+            android:id="@+id/textViewSilver"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="20"
+            android:text="99"
+            android:textColor="@color/loginButton"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageViewBronze"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:contentDescription="@string/WowTokenImage"
+            android:paddingStart="5dp"
+            android:src="@mipmap/bronze_icon_f" />
+
+        <TextView
+            android:id="@+id/textViewBronze"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="20"
+            android:text="99"
+            android:textColor="@color/loginButton"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewRealm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="33"
+        android:text="Area 52"
+        android:textAlignment="center"
+        android:textColor="@color/loginButton"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="33"
+        android:text="Loewiu"
+        android:textAlignment="center"
+        android:textColor="@color/loginButton"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

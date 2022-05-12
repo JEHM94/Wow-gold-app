@@ -42,8 +42,10 @@ public class SplashActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
-        String token = sharedPreferences.getString("token", "");
+        String token = sharedPreferences.getString("accessToken", "");
         String authCode = sharedPreferences.getString("authCode", "");
+
+        // **** ARREGLAR EXPIRACIÓN DEL TOKEN ****
 
         if (!token.isEmpty() && !authCode.isEmpty()) {
             redirect(GO_MAIN);
@@ -60,7 +62,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private static void saveOnPreferences(String token, String token_type, int expires_in) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("token", token);
+        editor.putString("accessToken", token);
         editor.putString("token_type", token_type);
         editor.putInt("expires_in", expires_in);
         editor.commit();

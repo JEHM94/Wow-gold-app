@@ -8,26 +8,55 @@
     tools:context="com.jehm.wowrandomapp.activities.MainActivity">
 
     <TextView
-        android:id="@+id/wowTokenPrice"
+        android:id="@+id/textViewWowToken"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="155,356"
-        android:textSize="18sp"
+        android:text="@string/wow_token"
         android:textColor="@color/icons"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/wowTokenPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/icons"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.539"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewWowToken" />
+
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageViewToken"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="16dp"
+        android:contentDescription="@string/WowTokenImage"
+        android:src="@mipmap/wowtoken_f"
+        android:visibility="invisible"
         app:layout_constraintEnd_toStartOf="@+id/wowTokenPrice"
-        app:layout_constraintHorizontal_bias="0.953"
+        app:layout_constraintHorizontal_bias="0.98"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/wowtoken_f" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewWowToken" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/goldFragment"
+        android:name="com.jehm.wowrandomapp.fragments.GoldFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wowTokenPrice"
+        tools:layout="@layout/fragment_gold" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

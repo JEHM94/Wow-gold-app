@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">WoW Random App</string>
     <string name="login_button">LOGIN WITH BATTLE.NET</string>
+    <string name="wow_token">WoW Token</string>
+    <string name="gold_fragment_tittle">Character\'s Gold</string>
+    <string name="WowTokenImage">WoW Token Image</string>
 </resources>
