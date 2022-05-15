@@ -12,10 +12,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.widget.Toast;
 
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
+import com.jehm.wowrandomapp.constants.Constants;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.google.gson.Gson;
 
@@ -56,6 +58,7 @@ public class SplashActivity extends AppCompatActivity {
             redirect(GO_LOGIN);
         }
         SystemClock.sleep(3000);
+
         //Destruye la instancia del activity para no volver
         finish();
     }

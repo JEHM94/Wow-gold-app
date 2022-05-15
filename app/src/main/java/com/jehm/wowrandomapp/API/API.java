@@ -13,13 +13,13 @@ public class API {
     private static String lastCharacterURL = null;
 
     public static Retrofit getRetrofit(String requestURL) {
-        if (retrofit == null || !lastURL.equals(requestURL)) {
+        //if (retrofit == null || !lastURL.equals(requestURL)) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(requestURL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
-            lastURL = requestURL;
-        }
+          //  lastURL = requestURL;
+        //}
         return retrofit;
     }
 

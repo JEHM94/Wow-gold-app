@@ -1,14 +1,15 @@
 package com.jehm.wowrandomapp.activities;
 
+
+import static com.jehm.wowrandomapp.constants.Constants.ACCESS_TOKEN_URL;
 import static com.jehm.wowrandomapp.constants.Constants.API_URL;
 import static com.jehm.wowrandomapp.constants.Constants.CLIENT_ID;
 import static com.jehm.wowrandomapp.constants.Constants.CLIENT_SECRET;
 import static com.jehm.wowrandomapp.constants.Constants.DYNAMIC_NAMESPACE;
-import static com.jehm.wowrandomapp.constants.Constants.GRANT_TYPE;
+
 import static com.jehm.wowrandomapp.constants.Constants.LOCALE;
 import static com.jehm.wowrandomapp.constants.Constants.PROFILE_NAMESPACE;
-import static com.jehm.wowrandomapp.constants.Constants.REDIRECT_URI;
-import static com.jehm.wowrandomapp.constants.Constants.SCOPE;
+
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -20,18 +21,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.google.gson.Gson;
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
+
+
 import com.jehm.wowrandomapp.constants.Constants;
+import com.jehm.wowrandomapp.models.AccessToken;
 import com.jehm.wowrandomapp.models.Character;
 import com.jehm.wowrandomapp.models.WowToken;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,8 +67,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         bindUI();
         getSharedPreferences();
-        getWowTokenPrice(accessToken);
-        getCharactersInfo(authCode);
+        getWowTokenPrice();
+
+        if (authAccessToken.isEmpty())
+            getAuthAccessToken(MainActivity.this);
+
+        //IMPORTANTE....
+        //PARTIR DESDE AQUI: GENERAR EL authAccessToken Y GUARDAR EN PREFS 1 VEZ AL DÍA
+        //SE ACTUALIZARÁ SOLO CON EL CÓDIGO DURANTE 1 DÍA
+        //SI EL CÓDIGO EXPIRA, REDIRECCIONAR A BATTLE.NET PARA GENERAR UNO BUENO
+        // getCharactersInfo(authCode);
 
         textViewWowToken.setOnClickListener(this);
         textViewPrice.setOnClickListener(this);
@@ -75,18 +93,63 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         accessToken = sharedPreferences.getString("accessToken", "");
         authCode = sharedPreferences.getString("authCode", "");
+        authAccessToken = sharedPreferences.getString("authAccessToken", "");
     }
 
-    private void getAuthAccessToken(){
+    //    BORRAR
+    private static void saveOnPreferences(String authAccessToken, String auth_token_type, int auth_expires_in) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("authAccessToken", authAccessToken);
+        editor.putString("auth_token_type", auth_token_type);
+        editor.putInt("auth_expires_in", auth_expires_in);
+        editor.commit();
+    }
+    //    BORRAR
+
+    private void getAuthAccessToken(Context context) {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("client_id", CLIENT_ID)
                 .addFormDataPart("client_secret", CLIENT_SECRET)
-                .addFormDataPart("redirect_uri", REDIRECT_URI)
-                .addFormDataPart("scope", SCOPE)
+                .addFormDataPart("redirect_uri", Constants.REDIRECT_URI)
+                .addFormDataPart("scope", Constants.SCOPE)
                 .addFormDataPart("grant_type", "authorization_code")
                 .addFormDataPart("code", authCode)
                 .build();
+
+        WoWService service = API.getRetrofit(ACCESS_TOKEN_URL).create(WoWService.class);
+
+        service.getAccessToken(requestBody)
+                .enqueue(new Callback<ResponseBody>() {
+                             @Override
+                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                 ResponseBody responseBody = response.body();
+                                 Gson gson = new Gson();
+                                 AccessToken accessToken = null;
+                                 if (responseBody != null) {
+                                     try {
+                                         accessToken = gson.fromJson(responseBody.string(), AccessToken.class);
+                                     } catch (IOException e) {
+                                         e.printStackTrace();
+                                     }
+                                     authAccessToken = accessToken.getAccess_token();
+                                     Toast.makeText(context, accessToken.getAccess_token(), Toast.LENGTH_LONG).show();
+//                                     BORRAR
+                                     String auth_token_type = accessToken.getToken_type();
+                                     int auth_expires_in = accessToken.getExpires_in();
+                                     saveOnPreferences(authAccessToken, auth_token_type, auth_expires_in);
+//                                     BORRAR
+                                 } else {
+                                     Toast.makeText(context, "rip", Toast.LENGTH_LONG).show();
+                                 }
+                             }
+
+                             @Override
+                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                 t.printStackTrace();
+                             }
+                         }
+                );
     }
 
     private void getCharactersInfo(String authCode) {
@@ -110,7 +173,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         });
     }
 
-    private void getWowTokenPrice(String accessToken) {
+    private void getWowTokenPrice() {
         WoWService service = API.getRetrofit(API_URL).create(WoWService.class);
         service.getWowTokenPrice(DYNAMIC_NAMESPACE, LOCALE, accessToken).enqueue(new Callback<WowToken>() {
             @Override
@@ -147,6 +210,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        getWowTokenPrice(accessToken);
+        getWowTokenPrice();
     }
 }
