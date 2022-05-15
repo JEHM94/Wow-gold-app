@@ -15,5 +15,7 @@ public class Constants {
     public static final String PROFILE_USER_API_URL = "profile/user/";
 
     public static final String DYNAMIC_NAMESPACE = "dynamic-us";
+    public static final String PROFILE_NAMESPACE = "profile-us";
     public static final String LOCALE = "en_US";
+    public static final String SCOPE = "wow.profile";
 }

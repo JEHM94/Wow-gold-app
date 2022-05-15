@@ -1,6 +1,7 @@
 package com.jehm.wowrandomapp.API.APIServices;
 
 import com.jehm.wowrandomapp.models.AuthorizeCode;
+import com.jehm.wowrandomapp.models.Character;
 import com.jehm.wowrandomapp.models.WowToken;
 
 import okhttp3.RequestBody;
@@ -22,4 +23,10 @@ public interface WoWService {
     Call<WowToken> getWowTokenPrice(@Query("namespace") String namespace,
                                     @Query("locale") String locale,
                                     @Query("access_token") String access_token);
+
+    //https://us.api.blizzard.com/profile/user/wow
+    @GET("profile/user/wow")
+    Call<Character> getCharacters(@Query("namespace") String namespace,
+                                  @Query("locale") String locale,
+                                  @Query("access_token") String access_token);
 }

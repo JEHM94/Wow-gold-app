@@ -4,6 +4,7 @@ import static com.jehm.wowrandomapp.constants.Constants.CLIENT_ID;
 import static com.jehm.wowrandomapp.constants.Constants.LOGIN_CODE_URL;
 import static com.jehm.wowrandomapp.constants.Constants.LOGIN_STATE;
 import static com.jehm.wowrandomapp.constants.Constants.REDIRECT_URI;
+import static com.jehm.wowrandomapp.constants.Constants.SCOPE;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.jehm.wowrandomapp.R;
+import com.jehm.wowrandomapp.constants.Constants;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -71,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         String loginURL = LOGIN_CODE_URL
                 + "authorize?client_id=" + CLIENT_ID
-                + "&scope=wow.profile"
+                + "&scope=" + SCOPE
                 + "&state=" + LOGIN_STATE
                 + "&response_type=code"
                 + "&redirect_uri=" + REDIRECT_URI;

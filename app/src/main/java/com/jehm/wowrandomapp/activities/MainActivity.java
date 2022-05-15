@@ -1,12 +1,15 @@
 package com.jehm.wowrandomapp.activities;
 
-import static com.jehm.wowrandomapp.constants.Constants.ACCESS_TOKEN_URL;
 import static com.jehm.wowrandomapp.constants.Constants.API_URL;
+import static com.jehm.wowrandomapp.constants.Constants.CLIENT_ID;
+import static com.jehm.wowrandomapp.constants.Constants.CLIENT_SECRET;
 import static com.jehm.wowrandomapp.constants.Constants.DYNAMIC_NAMESPACE;
+import static com.jehm.wowrandomapp.constants.Constants.GRANT_TYPE;
 import static com.jehm.wowrandomapp.constants.Constants.LOCALE;
-import static com.jehm.wowrandomapp.constants.Constants.WOW_TOKEN_API_URL;
+import static com.jehm.wowrandomapp.constants.Constants.PROFILE_NAMESPACE;
+import static com.jehm.wowrandomapp.constants.Constants.REDIRECT_URI;
+import static com.jehm.wowrandomapp.constants.Constants.SCOPE;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
@@ -21,13 +24,14 @@ import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
 import com.jehm.wowrandomapp.constants.Constants;
-import com.jehm.wowrandomapp.models.AccessToken;
+import com.jehm.wowrandomapp.models.Character;
 import com.jehm.wowrandomapp.models.WowToken;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,6 +48,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private String accessToken;
     private String authCode;
+    private String authAccessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         bindUI();
         getSharedPreferences();
         getWowTokenPrice(accessToken);
+        getCharactersInfo(authCode);
 
         textViewWowToken.setOnClickListener(this);
         textViewPrice.setOnClickListener(this);
@@ -69,6 +75,39 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         accessToken = sharedPreferences.getString("accessToken", "");
         authCode = sharedPreferences.getString("authCode", "");
+    }
+
+    private void getAuthAccessToken(){
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("client_id", CLIENT_ID)
+                .addFormDataPart("client_secret", CLIENT_SECRET)
+                .addFormDataPart("redirect_uri", REDIRECT_URI)
+                .addFormDataPart("scope", SCOPE)
+                .addFormDataPart("grant_type", "authorization_code")
+                .addFormDataPart("code", authCode)
+                .build();
+    }
+
+    private void getCharactersInfo(String authCode) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        WoWService service = retrofit.create(WoWService.class);
+        //WoWService service = API.getRetrofit(API_URL).create(WoWService.class);
+        service.getCharacters(PROFILE_NAMESPACE, LOCALE, authCode).enqueue(new Callback<Character>() {
+            @Override
+            public void onResponse(Call<Character> call, Response<Character> response) {
+                Character character = response.body();
+
+            }
+
+            @Override
+            public void onFailure(Call<Character> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void getWowTokenPrice(String accessToken) {
