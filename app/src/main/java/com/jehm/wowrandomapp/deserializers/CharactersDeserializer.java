@@ -17,7 +17,7 @@ public class CharactersDeserializer implements JsonDeserializer<Character> {
         int account_i = 0;
         int character_i = 0;
 
-        ArrayList<Character> characterList = new ArrayList<>();
+        List<Character> characterList = new ArrayList<>();
 
 
         int wowAccountsLength = json.getAsJsonObject().get("wow_accounts").getAsJsonArray().size();
