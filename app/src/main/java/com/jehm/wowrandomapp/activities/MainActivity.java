@@ -23,12 +23,14 @@ import android.widget.Toast;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
 
 
 import com.jehm.wowrandomapp.constants.Constants;
+import com.jehm.wowrandomapp.deserializers.CharactersDeserializer;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.jehm.wowrandomapp.models.Character;
 import com.jehm.wowrandomapp.models.WowToken;
@@ -71,6 +73,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         if (authAccessToken.isEmpty())
             getAuthAccessToken(MainActivity.this);
+        else {
+            getCharactersInfo();
+        }
 
         //IMPORTANTE....
         //PARTIR DESDE AQUI: GENERAR EL authAccessToken Y GUARDAR EN PREFS 1 VEZ AL DÍA
@@ -152,14 +157,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 );
     }
 
-    private void getCharactersInfo(String authCode) {
+    private void getCharactersInfo() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Character.class, new CharactersDeserializer());
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(builder.create()))
                 .build();
         WoWService service = retrofit.create(WoWService.class);
-        //WoWService service = API.getRetrofit(API_URL).create(WoWService.class);
-        service.getCharacters(PROFILE_NAMESPACE, LOCALE, authCode).enqueue(new Callback<Character>() {
+//        WoWService service = API.getRetrofit(API_URL).create(WoWService.class);
+        service.getCharacters(PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
             public void onResponse(Call<Character> call, Response<Character> response) {
                 Character character = response.body();

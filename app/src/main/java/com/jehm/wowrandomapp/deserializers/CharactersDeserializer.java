@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import com.jehm.wowrandomapp.models.Character;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CharactersDeserializer implements JsonDeserializer<Character> {
@@ -16,40 +17,70 @@ public class CharactersDeserializer implements JsonDeserializer<Character> {
         int account_i = 0;
         int character_i = 0;
 
-        int wowAccountID;
-        String characterName;
-        int characterID;
-        String realmName;
-        int realmID;
-        String faction;
-
-        wowAccountID = json.getAsJsonObject().get(String.valueOf(account_i))
-                .getAsJsonObject().get("id").getAsInt();
-        characterName = json.getAsJsonObject().get(String.valueOf(account_i))
-                .getAsJsonObject().get(String.valueOf(character_i))
-                .getAsJsonObject().get("name").getAsString();
-        characterID = json.getAsJsonObject().get(String.valueOf(account_i))
-                .getAsJsonObject().get(String.valueOf(character_i))
-                .getAsJsonObject().get("id").getAsInt();
-        realmName = json.getAsJsonObject().get(String.valueOf(account_i))
-                .getAsJsonObject().get(String.valueOf(character_i))
-                .getAsJsonObject().get("realm")
-                .getAsJsonObject().get("name").getAsString();
-        realmID = json.getAsJsonObject().get(String.valueOf(account_i))
-                .getAsJsonObject().get(String.valueOf(character_i))
-                .getAsJsonObject().get("realm")
-                .getAsJsonObject().get("id").getAsInt();
-        faction = json.getAsJsonObject().get(String.valueOf(account_i))
-                .getAsJsonObject().get(String.valueOf(character_i))
-                .getAsJsonObject().get("faction")
-                .getAsJsonObject().get("name").getAsString();
-
-//        do {
-//
-//
-//        } while (wowAccountID);
+        List<Character> characterList = new ArrayList<>();
 
 
-        return new Character(wowAccountID, characterName, characterID, realmName, realmID, faction, 0);
+        int wowAccountsLength = json.getAsJsonObject().get("wow_accounts").getAsJsonArray().size();
+        //json.getAsJsonObject().get("wow_accounts").getAsJsonArray().size() = 2
+        //json.getAsJsonObject().get("wow_accounts").getAsJsonArray().get(account_i).getAsJsonObject().get("characters").getAsJsonArray().size() = 29
+        while (account_i < wowAccountsLength) {
+            int wowAccountID = json
+                    .getAsJsonObject().get("wow_accounts")
+                    .getAsJsonArray().get(account_i)
+                    .getAsJsonObject().get("id").getAsInt();
+
+            int characterLenght = json.getAsJsonObject().get("wow_accounts")
+                    .getAsJsonArray().get(account_i)
+                    .getAsJsonObject().get("characters").getAsJsonArray().size();
+
+            while (character_i < characterLenght) {
+                String characterName = json
+                        .getAsJsonObject().get("wow_accounts")
+                        .getAsJsonArray().get(account_i)
+                        .getAsJsonObject().get("characters")
+                        .getAsJsonArray().get(character_i)
+                        .getAsJsonObject().get("name").getAsString();
+                int characterID = json
+                        .getAsJsonObject().get("wow_accounts")
+                        .getAsJsonArray().get(account_i)
+                        .getAsJsonObject().get("characters")
+                        .getAsJsonArray().get(character_i)
+                        .getAsJsonObject().get("id").getAsInt();
+                String realmName = json
+                        .getAsJsonObject().get("wow_accounts")
+                        .getAsJsonArray().get(account_i)
+                        .getAsJsonObject().get("characters")
+                        .getAsJsonArray().get(character_i)
+                        .getAsJsonObject().get("realm")
+                        .getAsJsonObject().get("name").getAsString();
+                int realmID = json
+                        .getAsJsonObject().get("wow_accounts")
+                        .getAsJsonArray().get(account_i)
+                        .getAsJsonObject().get("characters")
+                        .getAsJsonArray().get(character_i)
+                        .getAsJsonObject().get("realm")
+                        .getAsJsonObject().get("id").getAsInt();
+                String faction = json
+                        .getAsJsonObject().get("wow_accounts")
+                        .getAsJsonArray().get(account_i)
+                        .getAsJsonObject().get("characters")
+                        .getAsJsonArray().get(character_i)
+                        .getAsJsonObject().get("faction")
+                        .getAsJsonObject().get("name").getAsString();
+
+                Character character = new Character(wowAccountID, characterName, characterID, realmName, realmID, faction, 0);
+                characterList.add(character);
+
+                character_i++;
+            }
+            character_i = 0;
+            account_i++;
+        }
+
+
+
+
+
+        return new Character(0, "characterName", 0, "realmName", 0, "faction", 0);
     }
 }
