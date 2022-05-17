@@ -8,7 +8,6 @@ import com.jehm.wowrandomapp.models.Character;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CharactersDeserializer implements JsonDeserializer<Character> {
     @Override
@@ -17,7 +16,7 @@ public class CharactersDeserializer implements JsonDeserializer<Character> {
         int account_i = 0;
         int character_i = 0;
 
-        List<Character> characterList = new ArrayList<>();
+        ArrayList<Character> characterList = new ArrayList<>();
 
 
         int wowAccountsLength = json.getAsJsonObject().get("wow_accounts").getAsJsonArray().size();
@@ -78,10 +77,9 @@ public class CharactersDeserializer implements JsonDeserializer<Character> {
             account_i++;
         }
 
+        Character character = new Character(0, "characterName", 0, "realmName", 0, "faction", 0);
+        character.setCharacterList(characterList);
 
-
-
-
-        return new Character(0, "characterName", 0, "realmName", 0, "faction", 0);
+        return character;
     }
 }

@@ -10,7 +10,9 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface WoWService {
     // https://us.battle.net/oauth/token
@@ -29,4 +31,13 @@ public interface WoWService {
     Call<Character> getCharacters(@Query("namespace") String namespace,
                                   @Query("locale") String locale,
                                   @Query("access_token") String access_token);
+
+
+    //https://us.api.blizzard.com/profile/user/wow/protected-character/{realmId}-{characterId}
+    @GET("profile/user/wow/protected-character/{realmId}-{characterId}")
+    Call<Integer> getCharacterMoney(@Path("realmId") int realmId,
+                                    @Path("characterId") int characterId,
+                                    @Query("namespace") String namespace,
+                                    @Query("locale") String locale,
+                                    @Query("access_token") String access_token);
 }

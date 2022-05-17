@@ -9,8 +9,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class API {
     private static Retrofit retrofit = null;
-    private static String lastURL = null;
-    private static String lastCharacterURL = null;
+    private static String lastURL = "";
+    private static String lastCharacterURL = "";
 
     public static Retrofit getRetrofit(String requestURL) {
         if (retrofit == null || !lastURL.equals(requestURL)) {

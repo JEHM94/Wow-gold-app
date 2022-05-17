@@ -1,5 +1,7 @@
 package com.jehm.wowrandomapp.models;
 
+import java.util.ArrayList;
+
 public class Character {
     private int wowAccountID;
 
@@ -12,6 +14,8 @@ public class Character {
     private String faction;
     private int money;
 
+    private ArrayList<Character> characterList;
+
     public Character(int wowAccountID, String characterName, int characterID, String realmName, int realmID, String faction, int money) {
         this.wowAccountID = wowAccountID;
         this.characterName = characterName;
@@ -20,6 +24,14 @@ public class Character {
         this.realmID = realmID;
         this.faction = faction;
         this.money = money;
+    }
+
+    public ArrayList<Character> getCharacterList() {
+        return characterList;
+    }
+
+    public void setCharacterList(ArrayList<Character> characterList) {
+        this.characterList = characterList;
     }
 
     public int getWowAccountID() {

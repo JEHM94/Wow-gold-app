@@ -158,15 +158,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void getCharactersInfo() {
-        GsonBuilder builder = new GsonBuilder();
+        //ELIMINAR
+       /* GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Character.class, new CharactersDeserializer());
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(API_URL)
                 .addConverterFactory(GsonConverterFactory.create(builder.create()))
                 .build();
-        WoWService service = retrofit.create(WoWService.class);
-//        WoWService service = API.getRetrofit(API_URL).create(WoWService.class);
+        WoWService service = retrofit.create(WoWService.class);*/
+        WoWService service = API.getRetrofitCharacter(API_URL).create(WoWService.class);
         service.getCharacters(PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
             public void onResponse(Call<Character> call, Response<Character> response) {
