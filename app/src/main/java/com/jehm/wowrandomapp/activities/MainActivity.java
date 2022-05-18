@@ -155,7 +155,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void getCharactersInfo(Context context) {
         int yi = 0;
         WoWService service = API.getRetrofitCharacter(API_URL).create(WoWService.class);
-        service.getCharacters(PROFILE_NAMESPACE, LOCALE, "authAccessToken").enqueue(new Callback<Character>() {
+        service.getCharacters(PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
             public void onResponse(Call<Character> call, Response<Character> response) {
                 if (response.body() != null) {

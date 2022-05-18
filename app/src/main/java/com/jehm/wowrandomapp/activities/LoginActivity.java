@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login();
     }
 
-    public void login() {
+    private void login() {
         String loginURL = LOGIN_CODE_URL
                 + "authorize?client_id=" + CLIENT_ID
                 + "&scope=" + SCOPE
