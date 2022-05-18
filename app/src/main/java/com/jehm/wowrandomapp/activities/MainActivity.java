@@ -70,10 +70,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         getWowTokenPrice();
 
         if (authAccessToken.isEmpty())
-            getAuthAccessToken(MainActivity.this);
+            getAuthAccessToken();
         else {
-            getCharactersInfo();
-            getCharactersMoney();
+            getCharactersInfo(MainActivity.this);
         }
 
         //IMPORTANTE....
@@ -110,7 +109,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
     //    BORRAR
 
-    private void getAuthAccessToken(Context context) {
+    private void getAuthAccessToken() {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("client_id", CLIENT_ID)
@@ -137,14 +136,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                          e.printStackTrace();
                                      }
                                      authAccessToken = accessToken.getAccess_token();
-                                     Toast.makeText(context, accessToken.getAccess_token(), Toast.LENGTH_LONG).show();
 //                                     BORRAR
                                      String auth_token_type = accessToken.getToken_type();
                                      int auth_expires_in = accessToken.getExpires_in();
                                      saveOnPreferences(authAccessToken, auth_token_type, auth_expires_in);
 //                                     BORRAR
-                                 } else {
-                                     Toast.makeText(context, "rip", Toast.LENGTH_LONG).show();
                                  }
                              }
 
@@ -156,17 +152,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 );
     }
 
-    private void getCharactersInfo() {
-        int i = 0;
+    private void getCharactersInfo(Context context) {
+        int yi = 0;
         WoWService service = API.getRetrofitCharacter(API_URL).create(WoWService.class);
-        service.getCharacters(PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
+        service.getCharacters(PROFILE_NAMESPACE, LOCALE, "authAccessToken").enqueue(new Callback<Character>() {
             @Override
             public void onResponse(Call<Character> call, Response<Character> response) {
                 if (response.body() != null) {
                     Character character = response.body();
                     characterArrayList = character.getCharacterList();
+                    for (int i = 0; i < characterArrayList.size(); i++) {
+                        setCharacterMoney(characterArrayList.get(i).getRealmID(), characterArrayList.get(i).getCharacterID(), i);
+                    }
+                } else if (response.raw().message().equals("Unauthorized")) {
+                    Toast.makeText(context, "Token expired", Toast.LENGTH_LONG).show();
                 }
-
             }
 
             @Override
@@ -176,18 +176,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         });
     }
 
-    private void getCharactersMoney() {
-        int realmID = 1427;
-        int characterID = 169093734;
-        int banned = 1566;
-        int banned2 = 163721805;
+    private void setCharacterMoney(int realmID, int characterID, int position) {
+        int i = 0;
         WoWService service = API.getRetrofitMoney(API_URL).create(WoWService.class);
         service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Integer>() {
             @Override
             public void onResponse(Call<Integer> call, Response<Integer> response) {
                 if (response.body() != null) {
                     Integer money = response.body();
-                    characterArrayList.get(44).setMoney(money);
+                    characterArrayList.get(position).setMoney(money);
                 }
             }
 
@@ -196,6 +193,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 t.printStackTrace();
             }
         });
+    }
+
+    private void cleanList() {
+
     }
 
     private void getWowTokenPrice() {
