@@ -6,7 +6,6 @@ import static com.jehm.wowrandomapp.constants.Constants.API_URL;
 import static com.jehm.wowrandomapp.constants.Constants.CLIENT_ID;
 import static com.jehm.wowrandomapp.constants.Constants.CLIENT_SECRET;
 import static com.jehm.wowrandomapp.constants.Constants.DYNAMIC_NAMESPACE;
-
 import static com.jehm.wowrandomapp.constants.Constants.LOCALE;
 import static com.jehm.wowrandomapp.constants.Constants.PROFILE_NAMESPACE;
 
@@ -23,14 +22,13 @@ import android.widget.Toast;
 
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
 
 
 import com.jehm.wowrandomapp.constants.Constants;
-import com.jehm.wowrandomapp.deserializers.CharactersDeserializer;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.jehm.wowrandomapp.models.Character;
 import com.jehm.wowrandomapp.models.WowToken;
@@ -47,8 +45,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
@@ -74,7 +70,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if (authAccessToken.isEmpty())
             getAuthAccessToken(MainActivity.this);
         else {
-            getCharactersInfo();
+         //   getCharactersInfo();
+            getCharactersMoney();
         }
 
         //IMPORTANTE....
@@ -158,25 +155,33 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void getCharactersInfo() {
-        //ELIMINAR
-       /* GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Character.class, new CharactersDeserializer());
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create(builder.create()))
-                .build();
-        WoWService service = retrofit.create(WoWService.class);*/
+        int i = 0;
         WoWService service = API.getRetrofitCharacter(API_URL).create(WoWService.class);
         service.getCharacters(PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
             public void onResponse(Call<Character> call, Response<Character> response) {
                 Character character = response.body();
-
             }
 
             @Override
             public void onFailure(Call<Character> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void getCharactersMoney() {
+        int realmID = 1427;
+        int characterID = 169093734;
+        WoWService service = API.getRetrofitMoney(API_URL).create(WoWService.class);
+        service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                Integer money = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
                 t.printStackTrace();
             }
         });
@@ -213,8 +218,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private String formatPrice(String tokenPrice) {
         String[] priceArray = splitPrice(tokenPrice, 6);
         String[] gold = splitPrice(priceArray[0], 3);
-        String price = gold[0] + "," + gold[1];
-        return price;
+        return gold[0] + "," + gold[1];
     }
 
     @Override
