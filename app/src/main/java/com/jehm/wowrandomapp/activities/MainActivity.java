@@ -58,6 +58,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private String authCode;
     private String authAccessToken;
 
+    private ArrayList<Character> characterArrayList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +72,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if (authAccessToken.isEmpty())
             getAuthAccessToken(MainActivity.this);
         else {
-         //   getCharactersInfo();
+            getCharactersInfo();
             getCharactersMoney();
         }
 
@@ -160,7 +162,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         service.getCharacters(PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
             public void onResponse(Call<Character> call, Response<Character> response) {
-                Character character = response.body();
+                if (response.body() != null) {
+                    Character character = response.body();
+                    characterArrayList = character.getCharacterList();
+                }
+
             }
 
             @Override
@@ -173,11 +179,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void getCharactersMoney() {
         int realmID = 1427;
         int characterID = 169093734;
+        int banned = 1566;
+        int banned2 = 163721805;
         WoWService service = API.getRetrofitMoney(API_URL).create(WoWService.class);
         service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Integer>() {
             @Override
             public void onResponse(Call<Integer> call, Response<Integer> response) {
-                Integer money = response.body();
+                if (response.body() != null) {
+                    Integer money = response.body();
+                    characterArrayList.get(44).setMoney(money);
+                }
             }
 
             @Override
