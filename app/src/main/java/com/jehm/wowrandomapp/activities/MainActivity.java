@@ -14,9 +14,13 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +40,9 @@ import com.jehm.wowrandomapp.models.WowToken;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 import okhttp3.MultipartBody;
@@ -53,12 +59,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private TextView textViewWowToken;
     private TextView textViewPrice;
     private ImageView imageViewToken;
+    private ProgressBar progressBar;
 
     private String accessToken;
     private String authCode;
     private String authAccessToken;
 
     private ArrayList<Character> characterArrayList = new ArrayList<>();
+    HashMap<Integer, Integer> moneyList = new HashMap<Integer, Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +81,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             getAuthAccessToken();
         else {
             getCharactersInfo(MainActivity.this);
+            setMoney();
         }
 
         //IMPORTANTE....
@@ -86,10 +95,34 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
+    private void setMoney() {
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after xx seconds
+                progressBar.setVisibility(View.INVISIBLE);
+//                System.out.println("Size characterArrayList: " + characterArrayList.size());
+//                System.out.println("Size list: " + moneyList.size());
+                for (int i = 0; i < characterArrayList.size(); i++) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        if (!Objects.equals(moneyList.getOrDefault(i, 0), 0)) {
+                            System.out.println(characterArrayList.get(i).getCharacterName());
+                            System.out.println(characterArrayList.get(i).getRealmName());
+                            System.out.println(moneyList.get(i));
+                            System.out.println("--------------------");
+                        }
+                    }
+                }
+            }
+        }, 4000);
+    }
+
     private void bindUI() {
         textViewWowToken = (TextView) findViewById(R.id.textViewWowToken);
         textViewPrice = (TextView) findViewById(R.id.wowTokenPrice);
         imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     private void getSharedPreferences() {
@@ -185,6 +218,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 if (response.body() != null) {
                     Integer money = response.body();
                     characterArrayList.get(position).setMoney(money);
+                    moneyList.put(position, money);
                 }
             }
 
