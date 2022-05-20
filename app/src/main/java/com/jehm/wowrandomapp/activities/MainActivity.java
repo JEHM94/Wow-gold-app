@@ -40,9 +40,8 @@ import com.jehm.wowrandomapp.models.WowToken;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Predicate;
 
 
 import okhttp3.MultipartBody;
@@ -66,7 +65,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private String authAccessToken;
 
     private ArrayList<Character> characterArrayList = new ArrayList<>();
-    HashMap<Integer, Integer> moneyList = new HashMap<Integer, Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +79,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             getAuthAccessToken();
         else {
             getCharactersInfo(MainActivity.this);
-            setMoney();
+            cleanList();
         }
 
         //IMPORTANTE....
@@ -95,25 +93,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
-    private void setMoney() {
+    private void cleanList() {
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //Do something after xx seconds
                 progressBar.setVisibility(View.INVISIBLE);
-//                System.out.println("Size characterArrayList: " + characterArrayList.size());
-//                System.out.println("Size list: " + moneyList.size());
-                for (int i = 0; i < characterArrayList.size(); i++) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        if (!Objects.equals(moneyList.getOrDefault(i, 0), 0)) {
-                            System.out.println(characterArrayList.get(i).getCharacterName());
-                            System.out.println(characterArrayList.get(i).getRealmName());
-                            System.out.println(moneyList.get(i));
-                            System.out.println("--------------------");
-                        }
-                    }
+
+                Predicate<Character> condition = character -> character.getMoney() < 10000;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    characterArrayList.removeIf(condition);
                 }
+
             }
         }, 4000);
     }
@@ -210,28 +202,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void setCharacterMoney(int realmID, int characterID, int position) {
-        int i = 0;
         WoWService service = API.getRetrofitMoney(API_URL).create(WoWService.class);
-        service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Integer>() {
+        service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+            public void onResponse(Call<Character> call, Response<Character> response) {
                 if (response.body() != null) {
-                    Integer money = response.body();
-                    characterArrayList.get(position).setMoney(money);
-                    moneyList.put(position, money);
+                    Character character = response.body();
+                    characterArrayList.get(position).setMoney(character.getMoney());
                 }
             }
 
             @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
+            public void onFailure(Call<Character> call, Throwable t) {
                 t.printStackTrace();
             }
         });
     }
 
-    private void cleanList() {
-
-    }
 
     private void getWowTokenPrice() {
         WoWService service = API.getRetrofit(API_URL).create(WoWService.class);

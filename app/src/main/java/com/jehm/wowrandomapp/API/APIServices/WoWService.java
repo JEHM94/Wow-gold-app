@@ -35,9 +35,9 @@ public interface WoWService {
 
     //https://us.api.blizzard.com/profile/user/wow/protected-character/{realmId}-{characterId}
     @GET("profile/user/wow/protected-character/{realmId}-{characterId}")
-    Call<Integer> getCharacterMoney(@Path("realmId") int realmId,
-                                    @Path("characterId") int characterId,
-                                    @Query("namespace") String namespace,
-                                    @Query("locale") String locale,
-                                    @Query("access_token") String access_token);
+    Call<Character> getCharacterMoney(@Path("realmId") int realmId,
+                                 @Path("characterId") int characterId,
+                                 @Query("namespace") String namespace,
+                                 @Query("locale") String locale,
+                                 @Query("access_token") String access_token);
 }
