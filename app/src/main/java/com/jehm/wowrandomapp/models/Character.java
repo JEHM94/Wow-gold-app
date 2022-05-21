@@ -12,17 +12,19 @@ public class Character {
     private int realmID;
 
     private String faction;
+    private String characterClass;
     private long money;
 
     private ArrayList<Character> characterList;
 
-    public Character(int wowAccountID, String characterName, int characterID, String realmName, int realmID, String faction, long money) {
+    public Character(int wowAccountID, String characterName, int characterID, String realmName, int realmID, String faction, String characterClass, long money) {
         this.wowAccountID = wowAccountID;
         this.characterName = characterName;
         this.characterID = characterID;
         this.realmName = realmName;
         this.realmID = realmID;
         this.faction = faction;
+        this.characterClass = characterClass;
         this.money = money;
     }
 
@@ -80,6 +82,14 @@ public class Character {
 
     public void setFaction(String faction) {
         this.faction = faction;
+    }
+
+    public String getCharacterClass() {
+        return characterClass;
+    }
+
+    public void setCharacterClass(String characterClass) {
+        this.characterClass = characterClass;
     }
 
     public long getMoney() {

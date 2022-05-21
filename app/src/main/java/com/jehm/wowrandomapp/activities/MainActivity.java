@@ -173,11 +173,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                          e.printStackTrace();
                                      }
                                      authAccessToken = accessToken.getAccess_token();
-//                                     BORRAR
                                      String auth_token_type = accessToken.getToken_type();
                                      String auth_expires_in = String.valueOf(accessToken.getExpires_in());
                                      saveOnPreferences(authAccessToken, auth_token_type, auth_expires_in);
-//                                     BORRAR
                                  }
                              }
 
@@ -289,31 +287,5 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onClick(View view) {
         getWowTokenPrice();
-    }
-
-    private void getAuthCode() {
-        Intent appLinkIntent = getIntent();
-        Uri appLinkData = appLinkIntent.getData();
-        if (appLinkData != null) {
-            String codeResponse = appLinkData.getQueryParameter("code");
-            String stateResponse = appLinkData.getQueryParameter("state");
-            if (!codeResponse.isEmpty() && stateResponse.equals(LOGIN_STATE)) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("authCode", codeResponse);
-                editor.apply();
-                /*Intent intent = new Intent(this, MainActivity.class);
-                // FLAGS PARA EVITAR QUE EL USUARIO REGRESE CON EL BOTÓN ATRÁS
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);*/
-            }
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        getAuthCode();
-        Toast.makeText(MainActivity.this, "asdasdasdasdasd", Toast.LENGTH_SHORT).show();
     }
 }

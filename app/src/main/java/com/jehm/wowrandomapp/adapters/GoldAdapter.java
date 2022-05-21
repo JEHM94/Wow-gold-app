@@ -68,6 +68,7 @@ public class GoldAdapter extends BaseAdapter {
         String name = characters.get(positon).getCharacterName();
         String faction = (Objects.equals(characters.get(positon).getFaction(), "Horde")) ? "[H]" : "[A]";
         String realm = characters.get(positon).getRealmName();
+        String characterClass = characters.get(positon).getCharacterClass();
         String money = String.valueOf(characters.get(positon).getMoney());
         String bronze;
         String silver;
@@ -79,6 +80,7 @@ public class GoldAdapter extends BaseAdapter {
         setFactionColor(viewHolder, faction);
 
         viewHolder.textViewName.setText(name);
+        viewHolder.textViewName.setTextColor(Color.parseColor(getClassColor(characterClass)));
         viewHolder.textViewRealm.setText(realm);
         viewHolder.textViewFaction.setText(faction);
 
@@ -110,6 +112,40 @@ public class GoldAdapter extends BaseAdapter {
             viewHolder.textViewFaction.setTextColor(Color.parseColor(COLOR_HORDE));
         } else {
             viewHolder.textViewFaction.setTextColor(Color.parseColor(COLOR_ALLIANCE));
+        }
+    }
+
+    private String getClassColor(String className) {
+        switch (className) {
+            case "Death Knight":
+                return Constants.COLOR_DEATH_KNIGHT;
+            case "Demon Hunter":
+                return Constants.COLOR_DEMON_HUNTER;
+            case "Druid":
+                return Constants.COLOR_DRUID;
+            case "Evoker":
+                return Constants.COLOR_EVOKER;
+            case "Hunter":
+                return Constants.COLOR_HUNTER;
+            case "Mage":
+                return Constants.COLOR_MAGE;
+            case "Monk":
+                return Constants.COLOR_MONK;
+            case "Paladin":
+                return Constants.COLOR_PALADIN;
+            case "Priest":
+                return Constants.COLOR_PRIEST;
+            case "Rogue":
+                return Constants.COLOR_ROGUE;
+            case "Shaman":
+                return Constants.COLOR_SHAMAN;
+            case "Warlock":
+                return Constants.COLOR_WARLOCK;
+            case "Warrior":
+                return Constants.COLOR_WARRIOR;
+            default:
+                System.out.println("Class not found.");
+                return "";
         }
     }
 

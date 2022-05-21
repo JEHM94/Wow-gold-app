@@ -12,6 +12,6 @@ public class MoneyDeserializer implements JsonDeserializer<Character> {
     @Override
     public Character deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         long money = json.getAsJsonObject().get("money").getAsLong();
-        return new Character(0, "characterName", 0, "realmName", 0, "faction", money);
+        return new Character(0, "characterName", 0, "realmName", 0, "faction","characterClass", money);
     }
 }

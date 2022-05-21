@@ -66,8 +66,15 @@ public class CharactersDeserializer implements JsonDeserializer<Character> {
                         .getAsJsonArray().get(character_i)
                         .getAsJsonObject().get("faction")
                         .getAsJsonObject().get("name").getAsString();
+                String characterClass = json
+                        .getAsJsonObject().get("wow_accounts")
+                        .getAsJsonArray().get(account_i)
+                        .getAsJsonObject().get("characters")
+                        .getAsJsonArray().get(character_i)
+                        .getAsJsonObject().get("playable_class")
+                        .getAsJsonObject().get("name").getAsString();
 
-                Character character = new Character(wowAccountID, characterName, characterID, realmName, realmID, faction, 0);
+                Character character = new Character(wowAccountID, characterName, characterID, realmName, realmID, faction, characterClass, 0);
                 characterList.add(character);
 
 
@@ -77,7 +84,7 @@ public class CharactersDeserializer implements JsonDeserializer<Character> {
             account_i++;
         }
 
-        Character character = new Character(0, "characterName", 0, "realmName", 0, "faction", 0);
+        Character character = new Character(0, "characterName", 0, "realmName", 0, "faction", "characterClass", 0);
         character.setCharacterList(characterList);
 
         return character;
