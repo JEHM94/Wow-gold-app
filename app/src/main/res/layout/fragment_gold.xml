@@ -22,8 +22,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
@@ -32,7 +32,7 @@
                 android:text="Gold"
                 android:textAlignment="center"
                 android:textColor="@color/icons"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -40,9 +40,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="33"
                 android:text="Realm"
+                android:paddingStart="30dp"
                 android:textAlignment="center"
                 android:textColor="@color/icons"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -52,14 +53,14 @@
                 android:text="Name"
                 android:textAlignment="center"
                 android:textColor="@color/icons"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <ListView
             android:id="@+id/listViewGold"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+            android:layout_height="405dp"
+            android:paddingTop="5dp" />
     </LinearLayout>
 </FrameLayout>

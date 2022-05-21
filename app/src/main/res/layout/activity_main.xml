@@ -53,9 +53,11 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wowTokenPrice"
+        app:layout_constraintVertical_bias="0.01999998"
         tools:layout="@layout/fragment_gold" />
 
     <ProgressBar

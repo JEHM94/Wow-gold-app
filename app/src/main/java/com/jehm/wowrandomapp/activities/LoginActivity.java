@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static void saveOnPreferences(String authCode) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("authCode", authCode);
-        editor.commit();
+        editor.apply();
     }
 
     @Override

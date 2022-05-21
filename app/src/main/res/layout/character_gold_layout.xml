@@ -8,17 +8,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
 
-        <ImageView
-            android:id="@+id/imageViewGold"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="2dp"
-            android:contentDescription="@string/WowTokenImage"
-            android:paddingStart="5dp"
-            android:src="@mipmap/gold_icon_f" />
 
         <TextView
             android:id="@+id/textViewGold"
@@ -27,25 +19,25 @@
             android:layout_gravity="center"
             android:layout_weight="65"
             android:text="154,305"
-            android:textColor="@color/loginButton"
+            android:textColor="@color/icons"
             android:textSize="14sp"
-            android:textStyle="bold"/>
-
-            <!--Para oro > 999,999
-            android:layout_weight="80"
-            android:textSize="12sp"-->
-
-
+            android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/imageViewSilver"
+            android:id="@+id/imageViewGold"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_gravity="center"
+
             android:layout_marginTop="2dp"
             android:contentDescription="@string/WowTokenImage"
-            android:paddingStart="5dp"
-            android:src="@mipmap/silver_icon_f" />
+            android:paddingStart="1dp"
+            android:paddingEnd="5dp"
+            android:src="@mipmap/gold_icon_f" />
+
+        <!--Para oro > 999,999
+        android:layout_weight="80"
+        android:textSize="12sp"-->
+
 
         <TextView
             android:id="@+id/textViewSilver"
@@ -54,19 +46,21 @@
             android:layout_gravity="center"
             android:layout_weight="20"
             android:text="99"
-            android:textColor="@color/loginButton"
+            android:textColor="@color/icons"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/imageViewBronze"
+            android:id="@+id/imageViewSilver"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_gravity="center"
             android:layout_marginTop="2dp"
             android:contentDescription="@string/WowTokenImage"
-            android:paddingStart="5dp"
-            android:src="@mipmap/bronze_icon_f" />
+            android:paddingStart="1dp"
+            android:paddingEnd="5dp"
+
+            android:src="@mipmap/silver_icon_f" />
+
 
         <TextView
             android:id="@+id/textViewBronze"
@@ -75,9 +69,19 @@
             android:layout_gravity="center"
             android:layout_weight="20"
             android:text="99"
-            android:textColor="@color/loginButton"
+            android:textColor="@color/icons"
             android:textSize="14sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageViewBronze"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="2dp"
+            android:contentDescription="@string/WowTokenImage"
+            android:paddingStart="1dp"
+            android:paddingEnd="5dp"
+            android:src="@mipmap/bronze_icon_f" />
     </LinearLayout>
 
     <TextView
@@ -86,22 +90,41 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="33"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
         android:text="Area 52"
-        android:textAlignment="center"
-        android:textColor="@color/loginButton"
+        android:textColor="@color/icons"
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textViewName"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="33"
-        android:text="Loewiu"
-        android:textAlignment="center"
-        android:textColor="@color/loginButton"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/textViewFaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="(H)"
+            android:textColor="@color/loginButton"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="2dp"
+            android:text="Loewiu"
+            android:textColor="@color/loginButton"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </LinearLayout>

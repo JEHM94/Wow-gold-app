@@ -7,13 +7,19 @@ import static com.jehm.wowrandomapp.constants.Constants.CLIENT_ID;
 import static com.jehm.wowrandomapp.constants.Constants.CLIENT_SECRET;
 import static com.jehm.wowrandomapp.constants.Constants.DYNAMIC_NAMESPACE;
 import static com.jehm.wowrandomapp.constants.Constants.LOCALE;
+import static com.jehm.wowrandomapp.constants.Constants.LOGIN_CODE_URL;
+import static com.jehm.wowrandomapp.constants.Constants.LOGIN_STATE;
 import static com.jehm.wowrandomapp.constants.Constants.PROFILE_NAMESPACE;
+import static com.jehm.wowrandomapp.constants.Constants.REDIRECT_URI;
+import static com.jehm.wowrandomapp.constants.Constants.SCOPE;
 
 
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,7 +38,9 @@ import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
 
 
+import com.jehm.wowrandomapp.adapters.GoldAdapter;
 import com.jehm.wowrandomapp.constants.Constants;
+import com.jehm.wowrandomapp.fragments.GoldFragment;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.jehm.wowrandomapp.models.Character;
 import com.jehm.wowrandomapp.models.WowToken;
@@ -63,6 +71,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private String accessToken;
     private String authCode;
     private String authAccessToken;
+    private String authAccessTokenExpiration;
 
     private ArrayList<Character> characterArrayList = new ArrayList<>();
 
@@ -75,11 +84,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         getSharedPreferences();
         getWowTokenPrice();
 
-        if (authAccessToken.isEmpty())
+        if (authAccessToken.isEmpty() || authAccessTokenExpiration.equals("Expired"))
             getAuthAccessToken();
         else {
             getCharactersInfo(MainActivity.this);
-            cleanList();
         }
 
         //IMPORTANTE....
@@ -104,10 +112,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 Predicate<Character> condition = character -> character.getMoney() < 10000;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     characterArrayList.removeIf(condition);
+                    GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
+                    GoldAdapter goldAdapter = new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, characterArrayList);
+                    goldFragment.renderCharacterList(goldAdapter);
                 }
 
             }
-        }, 4000);
+        }, 5000);
     }
 
     private void bindUI() {
@@ -122,15 +133,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         accessToken = sharedPreferences.getString("accessToken", "");
         authCode = sharedPreferences.getString("authCode", "");
         authAccessToken = sharedPreferences.getString("authAccessToken", "");
+        authAccessTokenExpiration = sharedPreferences.getString("auth_expires_in", "");
     }
 
     //    BORRAR
-    private static void saveOnPreferences(String authAccessToken, String auth_token_type, int auth_expires_in) {
+    private static void saveOnPreferences(String authAccessToken, String auth_token_type, String auth_expires_in) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("authAccessToken", authAccessToken);
         editor.putString("auth_token_type", auth_token_type);
-        editor.putInt("auth_expires_in", auth_expires_in);
-        editor.commit();
+        editor.putString("auth_expires_in", auth_expires_in);
+        editor.apply();
     }
     //    BORRAR
 
@@ -163,7 +175,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                      authAccessToken = accessToken.getAccess_token();
 //                                     BORRAR
                                      String auth_token_type = accessToken.getToken_type();
-                                     int auth_expires_in = accessToken.getExpires_in();
+                                     String auth_expires_in = String.valueOf(accessToken.getExpires_in());
                                      saveOnPreferences(authAccessToken, auth_token_type, auth_expires_in);
 //                                     BORRAR
                                  }
@@ -189,8 +201,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     for (int i = 0; i < characterArrayList.size(); i++) {
                         setCharacterMoney(characterArrayList.get(i).getRealmID(), characterArrayList.get(i).getCharacterID(), i);
                     }
+                    cleanList();
                 } else if (response.raw().message().equals("Unauthorized")) {
-                    Toast.makeText(context, "Token expired", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Token expired. Please Log in again.", Toast.LENGTH_LONG).show();
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("auth_expires_in", "Expired");
+                    editor.apply();
+                    login();
                 }
             }
 
@@ -219,16 +236,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         });
     }
 
-
     private void getWowTokenPrice() {
         WoWService service = API.getRetrofit(API_URL).create(WoWService.class);
         service.getWowTokenPrice(DYNAMIC_NAMESPACE, LOCALE, accessToken).enqueue(new Callback<WowToken>() {
             @Override
             public void onResponse(Call<WowToken> call, Response<WowToken> response) {
-                WowToken wowToken = response.body();
-                textViewPrice.setText(formatPrice(wowToken.getPrice()));
-                imageViewToken.setVisibility(View.VISIBLE);
-                textViewPrice.setVisibility(View.VISIBLE);
+                if (response.body() != null) {
+                    WowToken wowToken = response.body();
+                    textViewPrice.setText(formatPrice(wowToken.getPrice()));
+                    imageViewToken.setVisibility(View.VISIBLE);
+                    textViewPrice.setVisibility(View.VISIBLE);
+                } else {
+                    System.out.println("Error trying to get WoW Token price");
+                }
             }
 
             @Override
@@ -254,8 +274,46 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         return gold[0] + "," + gold[1];
     }
 
+    private void login() {
+        String loginURL = LOGIN_CODE_URL
+                + "authorize?client_id=" + CLIENT_ID
+                + "&scope=" + SCOPE
+                + "&state=" + LOGIN_STATE
+                + "&response_type=code"
+                + "&redirect_uri=" + REDIRECT_URI;
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(loginURL));
+        startActivity(intent);
+    }
+
     @Override
     public void onClick(View view) {
         getWowTokenPrice();
+    }
+
+    private void getAuthCode() {
+        Intent appLinkIntent = getIntent();
+        Uri appLinkData = appLinkIntent.getData();
+        if (appLinkData != null) {
+            String codeResponse = appLinkData.getQueryParameter("code");
+            String stateResponse = appLinkData.getQueryParameter("state");
+            if (!codeResponse.isEmpty() && stateResponse.equals(LOGIN_STATE)) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("authCode", codeResponse);
+                editor.apply();
+                /*Intent intent = new Intent(this, MainActivity.class);
+                // FLAGS PARA EVITAR QUE EL USUARIO REGRESE CON EL BOTÓN ATRÁS
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);*/
+            }
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        getAuthCode();
+        Toast.makeText(MainActivity.this, "asdasdasdasdasd", Toast.LENGTH_SHORT).show();
     }
 }
