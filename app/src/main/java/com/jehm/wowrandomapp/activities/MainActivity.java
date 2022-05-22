@@ -84,12 +84,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         bindUI();
         getSharedPreferences();
         getWowTokenPrice();
-
-        if (authAccessToken.isEmpty() || authAccessTokenExpiration.equals("Expired"))
-            getAuthAccessToken();
-        else {
-            getCharactersInfo(MainActivity.this);
-        }
+        renderCharacterList();
 
         //IMPORTANTE....
         //PARTIR DESDE AQUI: GENERAR EL authAccessToken Y GUARDAR EN PREFS 1 VEZ AL DÍA
@@ -100,6 +95,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         textViewWowToken.setOnClickListener(this);
         textViewPrice.setOnClickListener(this);
 
+    }
+
+    private void renderCharacterList() {
+        if (authAccessToken.isEmpty() || authAccessTokenExpiration.equals("Expired")) {
+            getAuthAccessToken();
+        }
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after xx seconds
+                getCharactersInfo(MainActivity.this);
+            }
+        }, 1500);
     }
 
     private void cleanList() {
@@ -137,7 +146,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         authAccessTokenExpiration = sharedPreferences.getString("auth_expires_in", "");
     }
 
-    //    BORRAR
     private static void saveOnPreferences(String authAccessToken, String auth_token_type, String auth_expires_in) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("authAccessToken", authAccessToken);
@@ -145,7 +153,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         editor.putString("auth_expires_in", auth_expires_in);
         editor.apply();
     }
-    //    BORRAR
 
     private void getAuthAccessToken() {
         RequestBody requestBody = new MultipartBody.Builder()

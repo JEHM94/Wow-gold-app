@@ -12,16 +12,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.widget.Toast;
 
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
-import com.jehm.wowrandomapp.constants.Constants;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -33,6 +37,10 @@ import retrofit2.Response;
 public class SplashActivity extends AppCompatActivity {
 
     private static SharedPreferences sharedPreferences;
+    private String token;
+    private String authCode;
+    private String tokenExpirationDate;
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
 
     private static final String GO_LOGIN = "0";
     private static final String GO_MAIN = "1";
@@ -42,33 +50,63 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        getSharedPreferences();
+        verifyTokenAndRedirect();
+        SystemClock.sleep(3000);
+        //Destruye la instancia del activity para no volver
+        finish();
+    }
 
-        String token = sharedPreferences.getString("accessToken", "");
-        String authCode = sharedPreferences.getString("authCode", "");
-
-        // **** ARREGLAR EXPIRACIÓN DEL TOKEN ****
-
+    private void verifyTokenAndRedirect() {
         if (!token.isEmpty() && !authCode.isEmpty()) {
+            if(isTokenExpired(tokenExpirationDate)){
+                getAccessToken();
+            }
             redirect(GO_MAIN);
         } else if (!token.isEmpty()) {
+            if(isTokenExpired(tokenExpirationDate)){
+                getAccessToken();
+            }
             redirect(GO_LOGIN);
         } else {
             getAccessToken();
             redirect(GO_LOGIN);
         }
-        SystemClock.sleep(3000);
-
-        //Destruye la instancia del activity para no volver
-        finish();
     }
 
-    private static void saveOnPreferences(String token, String token_type, int expires_in) {
+    private static String setTokenExpirationDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        Date expirationDate = calendar.getTime();
+
+        return dateFormat.format(expirationDate);
+    }
+
+    private boolean isTokenExpired(String tokenExpirationDate) {
+        try {
+            Date expirationDate = dateFormat.parse(tokenExpirationDate);
+            int result = Calendar.getInstance().getTime().compareTo(expirationDate);
+            return result >= 0;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void getSharedPreferences() {
+        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        token = sharedPreferences.getString("accessToken", "");
+        authCode = sharedPreferences.getString("authCode", "");
+        tokenExpirationDate = sharedPreferences.getString("token_date", "");
+    }
+
+    private static void saveOnPreferences(String token, String token_type, int expires_in, String token_date) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("accessToken", token);
         editor.putString("token_type", token_type);
         editor.putInt("expires_in", expires_in);
-        editor.commit();
+        editor.putString("token_date", token_date);
+        editor.apply();
     }
 
     private void redirect(String goTo) {
@@ -113,7 +151,8 @@ public class SplashActivity extends AppCompatActivity {
                                      String token = accessToken.getAccess_token();
                                      String token_type = accessToken.getToken_type();
                                      int expires_in = accessToken.getExpires_in();
-                                     saveOnPreferences(token, token_type, expires_in);
+                                     String expirationDate = setTokenExpirationDate();
+                                     saveOnPreferences(token, token_type, expires_in, expirationDate);
                                  }
                              }
 
