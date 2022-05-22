@@ -5,9 +5,10 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_weight="37"
         android:orientation="horizontal"
         android:paddingTop="5dp">
 
@@ -16,49 +17,44 @@
             android:id="@+id/textViewGold"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_weight="65"
-            android:text="154,305"
-            android:textColor="@color/icons"
+            android:text="999,999"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/character_gold_layout"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageViewGold"
-            android:layout_width="20dp"
+            android:layout_width="15dp"
             android:layout_height="20dp"
-
-            android:layout_marginTop="2dp"
             android:contentDescription="@string/WowTokenImage"
-            android:paddingStart="1dp"
-            android:paddingEnd="5dp"
             android:src="@mipmap/gold_icon_f" />
 
         <!--Para oro > 999,999
-        android:layout_weight="80"
         android:textSize="12sp"-->
+
+        <!--Para oro > 9,999,999
+        android:textSize="11sp"-->
 
 
         <TextView
             android:id="@+id/textViewSilver"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+
             android:layout_weight="20"
             android:text="99"
-            android:textColor="@color/icons"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/character_gold_layout"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageViewSilver"
-            android:layout_width="20dp"
+            android:layout_width="15dp"
             android:layout_height="20dp"
-            android:layout_marginTop="2dp"
             android:contentDescription="@string/WowTokenImage"
-            android:paddingStart="1dp"
-            android:paddingEnd="5dp"
-
             android:src="@mipmap/silver_icon_f" />
 
 
@@ -66,21 +62,18 @@
             android:id="@+id/textViewBronze"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_weight="20"
             android:text="99"
-            android:textColor="@color/icons"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/character_gold_layout"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageViewBronze"
-            android:layout_width="20dp"
+            android:layout_width="15dp"
             android:layout_height="20dp"
-            android:layout_marginTop="2dp"
             android:contentDescription="@string/WowTokenImage"
-            android:paddingStart="1dp"
-            android:paddingEnd="5dp"
             android:src="@mipmap/bronze_icon_f" />
     </LinearLayout>
 
@@ -89,11 +82,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="33"
+        android:layout_weight="29"
         android:paddingStart="20dp"
         android:paddingEnd="10dp"
         android:text="Area 52"
-        android:textColor="@color/icons"
+        android:textColor="@color/character_gold_layout"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -101,9 +94,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="33"
-        android:orientation="horizontal"
-        android:paddingTop="5dp">
+        android:layout_weight="31"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textViewFaction"

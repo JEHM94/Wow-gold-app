@@ -43,6 +43,7 @@ import com.jehm.wowrandomapp.constants.Constants;
 import com.jehm.wowrandomapp.fragments.GoldFragment;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.jehm.wowrandomapp.models.Character;
+import com.jehm.wowrandomapp.models.Utils;
 import com.jehm.wowrandomapp.models.WowToken;
 
 
@@ -256,19 +257,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         });
     }
 
-    private static String[] splitPrice(String text, int size) {
-        List<String> parts = new ArrayList<>();
-
-        int length = text.length();
-        for (int i = 0; i < length; i += size) {
-            parts.add(text.substring(i, Math.min(length, i + size)));
-        }
-        return parts.toArray(new String[0]);
-    }
-
     private String formatPrice(String tokenPrice) {
-        String[] priceArray = splitPrice(tokenPrice, 6);
-        String[] gold = splitPrice(priceArray[0], 3);
+        String[] priceArray = Utils.splitPrice(tokenPrice, 6);
+        String[] gold = Utils.splitPrice(priceArray[0], 3);
         return gold[0] + "," + gold[1];
     }
 

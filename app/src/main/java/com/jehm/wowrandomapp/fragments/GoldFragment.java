@@ -29,41 +29,6 @@ public class GoldFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gold, container, false);
         listView = (ListView) view.findViewById(R.id.listViewGold);
-/*
-        ArrayList<String> names = new ArrayList<>();
-        names.add("Loe");
-        names.add("Doomi");
-        names.add("Duhh");
-        names.add("Loewiu");
-        names.add("Aennoxen");
-        names.add("Loe");
-        names.add("Doomi");
-        names.add("Duhh");
-        names.add("Loewiu");
-        names.add("Aennoxen");
-        names.add("Loe");
-        names.add("Doomi");
-        names.add("Duhh");
-        names.add("Loewiu");
-        names.add("Aennoxen");
-        names.add("Loe");
-        names.add("Doomi");
-        names.add("Duhh");
-        names.add("Loewiu");
-        names.add("Aennoxen");
-
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after xx seconds
-
-
-            }
-        }, 6000);*/
-
-
-
         return view;
     }
     public void renderCharacterList (GoldAdapter goldAdapter){
