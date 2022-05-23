@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, 1700);
     }
 
-    private void cleanList() {
+    private void cleanAndShowList() {
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
@@ -120,11 +120,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     characterArrayList.removeIf(condition);
                     GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
                     GoldAdapter goldAdapter = new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, characterArrayList);
-                    goldFragment.renderListFragment(goldAdapter);
+                    ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
+                    goldAdapters.add(goldAdapter);
+                    goldFragment.renderListFragment(MainActivity.this, goldAdapters);
                 }
 
             }
         }, 5000);
+    }
+
+    private void splitListPerID(){
+        ArrayList<ArrayList<Character>> accountsList = new ArrayList<>();
+        ArrayList<Character> tempList = new ArrayList<>();
+        int currentAccount = characterArrayList.get(0).getWowAccountID();
+        int accountCounter = 0;
+        for (int i = 0; i < characterArrayList.size(); i++){
+            if(characterArrayList.get(i).getWowAccountID() == currentAccount){
+                tempList.add(characterArrayList.get(i));
+            }else {
+                accountsList.add(tempList);
+                currentAccount = characterArrayList.get(i).getWowAccountID();
+                tempList.clear();
+                tempList.add(characterArrayList.get(i));
+            }
+            accountsList.add(tempList);
+            characterArrayList.
+        }
     }
 
     private void bindUI() {
@@ -204,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (int i = 0; i < characterArrayList.size(); i++) {
                         setCharacterMoney(characterArrayList.get(i).getRealmID(), characterArrayList.get(i).getCharacterID(), i);
                     }
-                    cleanList();
+                    cleanAndShowList();
                 } else if (response.raw().message().equals("Unauthorized")) {
                     Toast.makeText(context, "Token expired. Please Log in again.", Toast.LENGTH_LONG).show();
                     SharedPreferences.Editor editor = sharedPreferences.edit();

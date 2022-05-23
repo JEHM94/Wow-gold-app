@@ -12,12 +12,18 @@ import android.widget.ListView;
 import com.jehm.wowrandomapp.R;
 import com.jehm.wowrandomapp.adapters.GoldAdapter;
 
+import java.util.ArrayList;
+
 public class ListFragment extends Fragment {
 
     private ListView listView;
+    private GoldAdapter goldAdapter;
 
     public ListFragment() {
         // Required empty public constructor
+    }
+    public ListFragment(GoldAdapter goldAdapter) {
+        this.goldAdapter = goldAdapter;
     }
 
     @Override
@@ -25,9 +31,7 @@ public class ListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         listView = (ListView) view.findViewById(R.id.listViewGold);
-        return view;
-    }
-    public void renderCharacterList (GoldAdapter goldAdapter){
         listView.setAdapter(goldAdapter);
+        return view;
     }
 }
