@@ -14,6 +14,8 @@ import static com.jehm.wowrandomapp.constants.Constants.REDIRECT_URI;
 import static com.jehm.wowrandomapp.constants.Constants.SCOPE;
 
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
@@ -49,7 +51,6 @@ import com.jehm.wowrandomapp.models.WowToken;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 
 
@@ -61,13 +62,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static SharedPreferences sharedPreferences;
     private TextView textViewWowToken;
     private TextView textViewPrice;
     private ImageView imageViewToken;
     private ProgressBar progressBar;
+    private Toolbar toolbar;
 
     private String accessToken;
     private String authCode;
@@ -86,12 +88,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         getWowTokenPrice();
         renderCharacterList();
 
-        //IMPORTANTE....
-        //PARTIR DESDE AQUI: GENERAR EL authAccessToken Y GUARDAR EN PREFS 1 VEZ AL DÍA
-        //SE ACTUALIZARÁ SOLO CON EL CÓDIGO DURANTE 1 DÍA
-        //SI EL CÓDIGO EXPIRA, REDIRECCIONAR A BATTLE.NET PARA GENERAR UNO BUENO
-        // getCharactersInfo(authCode);
-
         textViewWowToken.setOnClickListener(this);
         textViewPrice.setOnClickListener(this);
 
@@ -108,7 +104,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 //Do something after xx seconds
                 getCharactersInfo(MainActivity.this);
             }
-        }, 1500);
+        }, 1700);
     }
 
     private void cleanList() {
@@ -124,7 +120,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     characterArrayList.removeIf(condition);
                     GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
                     GoldAdapter goldAdapter = new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, characterArrayList);
-                    goldFragment.renderCharacterList(goldAdapter);
+                    goldFragment.renderListFragment(goldAdapter);
                 }
 
             }
@@ -136,6 +132,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         textViewPrice = (TextView) findViewById(R.id.wowTokenPrice);
         imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void getSharedPreferences() {
@@ -196,7 +194,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void getCharactersInfo(Context context) {
-        int yi = 0;
         WoWService service = API.getRetrofitCharacter(API_URL).create(WoWService.class);
         service.getCharacters(PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override

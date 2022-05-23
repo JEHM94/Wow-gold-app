@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:background="@mipmap/background_foreground"
     tools:context="com.jehm.wowrandomapp.activities.MainActivity">
-
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
     <TextView
         android:id="@+id/textViewWowToken"
         android:layout_width="wrap_content"
@@ -18,7 +20,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <TextView
         android:id="@+id/wowTokenPrice"
@@ -51,13 +53,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wowTokenPrice"
-        app:layout_constraintVertical_bias="0.01999998"
+        app:layout_constraintVertical_bias="0.0"
         tools:layout="@layout/fragment_gold" />
 
     <ProgressBar
@@ -65,10 +67,9 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="92dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/goldFragment"
+        app:layout_constraintEnd_toEndOf="@+id/goldFragment"
+        app:layout_constraintStart_toStartOf="@+id/goldFragment"
         app:layout_constraintTop_toTopOf="@+id/goldFragment" />
 
 
