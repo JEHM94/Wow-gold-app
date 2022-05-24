@@ -20,8 +20,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.jehm.wowrandomapp.R;
 import com.jehm.wowrandomapp.adapters.GoldAdapter;
 import com.jehm.wowrandomapp.adapters.ViewPagerAdapter;
+import com.jehm.wowrandomapp.models.Character;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class GoldFragment extends Fragment {
 
@@ -43,13 +45,14 @@ public class GoldFragment extends Fragment {
         return view;
     }
 
-    public void renderListFragment(FragmentActivity fragmentActivity, ArrayList<GoldAdapter> goldAdapters) {
-
+    public void renderListFragment(FragmentActivity fragmentActivity, ArrayList<GoldAdapter> goldAdapters, ArrayList<Integer> wowAccountIDs) {
         viewPager2.setAdapter(new ViewPagerAdapter(fragmentActivity, goldAdapters));
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                tab.setText("WoW " + position);
+                Character character = (Character) goldAdapters.get(position).getItem(0);
+                int ID = character.getWowAccountID();
+                tab.setText("WoW " + (wowAccountIDs.indexOf(ID)+1));
             }
         });
         tabLayoutMediator.attach();

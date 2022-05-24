@@ -16,7 +16,6 @@ import static com.jehm.wowrandomapp.constants.Constants.SCOPE;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -51,7 +50,11 @@ import com.jehm.wowrandomapp.models.WowToken;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 import okhttp3.MultipartBody;
@@ -69,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textViewPrice;
     private ImageView imageViewToken;
     private ProgressBar progressBar;
-    private Toolbar toolbar;
 
     private String accessToken;
     private String authCode;
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String authAccessTokenExpiration;
 
     private ArrayList<Character> characterArrayList = new ArrayList<>();
+    private final ArrayList<Integer> wowAccountIDs = new ArrayList<>();
+    private final Map<Integer, ArrayList<Character>> subLists = new HashMap<Integer, ArrayList<Character>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,38 +118,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 //Do something after xx seconds
                 progressBar.setVisibility(View.INVISIBLE);
+                splitListPerID();
 
                 Predicate<Character> condition = character -> character.getMoney() < 10000;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    characterArrayList.removeIf(condition);
-                    GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
-                    GoldAdapter goldAdapter = new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, characterArrayList);
-                    ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
-                    goldAdapters.add(goldAdapter);
-                    goldFragment.renderListFragment(MainActivity.this, goldAdapters);
-                }
+                ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    //Old****   characterArrayList.removeIf(condition);
+                    //
+                    for (int i = 0; i < wowAccountIDs.size(); i++){
+                        subLists.get(wowAccountIDs.get(i)).removeIf(condition);
+                        if(subLists.get(wowAccountIDs.get(i)).size() != 0){
+                            goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, subLists.get(wowAccountIDs.get(i))));
+                        }
+                    }
+                    //
+                    GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
+                    //GoldAdapter goldAdapter = new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, characterArrayList);
+                    //goldAdapters.add(goldAdapter);
+                    goldFragment.renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
+                }
             }
         }, 5000);
     }
 
     private void splitListPerID(){
-        ArrayList<ArrayList<Character>> accountsList = new ArrayList<>();
-        ArrayList<Character> tempList = new ArrayList<>();
-        int currentAccount = characterArrayList.get(0).getWowAccountID();
-        int accountCounter = 0;
-        for (int i = 0; i < characterArrayList.size(); i++){
-            if(characterArrayList.get(i).getWowAccountID() == currentAccount){
-                tempList.add(characterArrayList.get(i));
-            }else {
-                accountsList.add(tempList);
-                currentAccount = characterArrayList.get(i).getWowAccountID();
-                tempList.clear();
-                tempList.add(characterArrayList.get(i));
+        for(Character character : characterArrayList){
+            ArrayList<Character> tempList = subLists.get(character.getWowAccountID());
+            if(tempList == null){
+                tempList = new ArrayList<Character>();
+                subLists.put(character.getWowAccountID(), tempList);
             }
-            accountsList.add(tempList);
-            characterArrayList.
+            tempList.add(character);
         }
+        wowAccountIDs.addAll(subLists.keySet());
     }
 
     private void bindUI() {
@@ -153,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textViewPrice = (TextView) findViewById(R.id.wowTokenPrice);
         imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -243,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setCharacterMoney(int realmID, int characterID, int position) {
+        int rewr= 0;
         WoWService service = API.getRetrofitMoney(API_URL).create(WoWService.class);
         service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
