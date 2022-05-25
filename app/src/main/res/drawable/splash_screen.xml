@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@mipmap/background_background"
+        android:width="700dp"
+        android:gravity="center"
+        android:height="1200dp"/>
+    <item
+        android:drawable="@mipmap/splash_image"
+        android:gravity="center"
+        android:width="200dp"
+        android:height="200dp"/>
+
+</layer-list>

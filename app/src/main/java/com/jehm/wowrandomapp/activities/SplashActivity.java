@@ -48,11 +48,10 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
 
         getSharedPreferences();
         verifyTokenAndRedirect();
-        SystemClock.sleep(3000);
+
         //Destruye la instancia del activity para no volver
         finish();
     }

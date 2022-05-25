@@ -3,13 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/GitHub/Carries/app/src/main/res/drawable-v23/splash_screen.xml" value="0.2145" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/drawable/roundshapebtn.xml" value="0.132" />
+        <entry key="..\:/GitHub/Carries/app/src/main/res/drawable/splash_screen.xml" value="0.2145" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/activity_splash.xml" value="0.22735507246376813" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/character_gold_layout.xml" value="0.33" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/fragment_gold.xml" value="0.25" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/fragment_list.xml" value="0.24365942028985507" />
+        <entry key="..\:/GitHub/Carries/app/src/main/res/layout/splash_screen.xml" value="0.24365942028985507" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/toolbar.xml" value="0.24365942028985507" />
       </map>
     </option>
