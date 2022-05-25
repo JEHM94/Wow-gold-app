@@ -26,7 +26,7 @@ public class GoldAdapter extends BaseAdapter {
     private int layout;
     private ArrayList<Character> characters;
 
-    public GoldAdapter(Context context, int layout, ArrayList<Character> characters) {
+    public GoldAdapter(Context context, int layout, final ArrayList<Character> characters) {
         this.context = context;
         this.layout = layout;
         this.characters = characters;

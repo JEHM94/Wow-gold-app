@@ -13,10 +13,6 @@ import static com.jehm.wowrandomapp.constants.Constants.PROFILE_NAMESPACE;
 import static com.jehm.wowrandomapp.constants.Constants.REDIRECT_URI;
 import static com.jehm.wowrandomapp.constants.Constants.SCOPE;
 
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,40 +22,31 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.gson.Gson;
-
-import com.google.gson.GsonBuilder;
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
-
-
 import com.jehm.wowrandomapp.adapters.GoldAdapter;
 import com.jehm.wowrandomapp.constants.Constants;
-import com.jehm.wowrandomapp.deserializers.CharactersDeserializer;
 import com.jehm.wowrandomapp.fragments.GoldFragment;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.jehm.wowrandomapp.models.Character;
 import com.jehm.wowrandomapp.models.Utils;
 import com.jehm.wowrandomapp.models.WowToken;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -67,8 +54,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -131,24 +116,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Do something after xx seconds
                 progressBar.setVisibility(View.INVISIBLE);
                 splitListPerID();
-
-                Predicate<Character> condition = character -> character.getMoney() < 10000;
                 ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    //Old****   characterArrayList.removeIf(condition);
-                    //
+                    Predicate<Character> condition = character -> character.getMoney() < 10000;
                     for (int i = 0; i < wowAccountIDs.size(); i++) {
                         subLists.get(wowAccountIDs.get(i)).removeIf(condition);
                         if (subLists.get(wowAccountIDs.get(i)).size() != 0) {
                             goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, subLists.get(wowAccountIDs.get(i))));
                         }
                     }
-                    //
+
+                } else {
+                    ArrayList<Character> tempArrayList = null;
+                    for (int i = 0; i < wowAccountIDs.size(); i++) {
+                        tempArrayList = new ArrayList<Character>();
+                        for (int x = 0; x < subLists.get(wowAccountIDs.get(i)).size(); x++ ){
+                            if(subLists.get(wowAccountIDs.get(i)).get(x).getMoney() >= 10000){
+                                tempArrayList.add(subLists.get(wowAccountIDs.get(i)).get(x));
+                            }
+                        }
+                        if (tempArrayList.size() != 0) {
+                            goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, tempArrayList));
+                        }
+                    }
+                }
+                if (goldAdapters.size() > 0){
                     GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
-                    //GoldAdapter goldAdapter = new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, characterArrayList);
-                    //goldAdapters.add(goldAdapter);
                     goldFragment.renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
+                } else {
+                    Toast.makeText(MainActivity.this, "No characters found", Toast.LENGTH_LONG).show();
                 }
             }
         }, 5000);
