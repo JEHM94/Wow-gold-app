@@ -18,6 +18,7 @@ import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.google.gson.Gson;
+import com.jehm.wowrandomapp.models.Utils;
 
 import java.io.IOException;
 import java.text.DateFormat;

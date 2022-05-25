@@ -26,6 +26,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,6 +36,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import com.google.gson.GsonBuilder;
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
 import com.jehm.wowrandomapp.R;
@@ -41,6 +44,7 @@ import com.jehm.wowrandomapp.R;
 
 import com.jehm.wowrandomapp.adapters.GoldAdapter;
 import com.jehm.wowrandomapp.constants.Constants;
+import com.jehm.wowrandomapp.deserializers.CharactersDeserializer;
 import com.jehm.wowrandomapp.fragments.GoldFragment;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.jehm.wowrandomapp.models.Character;
@@ -63,6 +67,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -87,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Utils.transparentStatusBar(this);
         bindUI();
         getSharedPreferences();
         getWowTokenPrice();
@@ -94,7 +101,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         textViewWowToken.setOnClickListener(this);
         textViewPrice.setOnClickListener(this);
+    }
 
+    @Override
+    protected void onStop() {
+        API.clearRetrofit();
+        super.onStop();
     }
 
     private void renderCharacterList() {
@@ -126,9 +138,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     //Old****   characterArrayList.removeIf(condition);
                     //
-                    for (int i = 0; i < wowAccountIDs.size(); i++){
+                    for (int i = 0; i < wowAccountIDs.size(); i++) {
                         subLists.get(wowAccountIDs.get(i)).removeIf(condition);
-                        if(subLists.get(wowAccountIDs.get(i)).size() != 0){
+                        if (subLists.get(wowAccountIDs.get(i)).size() != 0) {
                             goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, subLists.get(wowAccountIDs.get(i))));
                         }
                     }
@@ -142,10 +154,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, 5000);
     }
 
-    private void splitListPerID(){
-        for(Character character : characterArrayList){
+    private void splitListPerID() {
+        for (Character character : characterArrayList) {
             ArrayList<Character> tempList = subLists.get(character.getWowAccountID());
-            if(tempList == null){
+            if (tempList == null) {
                 tempList = new ArrayList<Character>();
                 subLists.put(character.getWowAccountID(), tempList);
             }
@@ -249,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setCharacterMoney(int realmID, int characterID, int position) {
-        int rewr= 0;
+        int rewr = 0;
         WoWService service = API.getRetrofitMoney(API_URL).create(WoWService.class);
         service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override

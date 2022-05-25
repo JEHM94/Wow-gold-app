@@ -52,4 +52,11 @@ public class API {
         }
         return retrofit;
     }
+
+    public static void clearRetrofit() {
+        retrofit = null;
+        lastURL = "";
+        lastCharacterURL = "";
+        lastMoneyURL = "";
+    }
 }
