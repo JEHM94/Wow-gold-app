@@ -5,11 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/background_foreground"
-    tools:context="com.jehm.wowrandomapp.activities.MainActivity"
-    android:paddingTop="10dp">
+    android:paddingTop="10dp"
+    tools:context="com.jehm.wowrandomapp.activities.MainActivity">
+
     <include
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar3"
         layout="@layout/toolbar" />
+
+
     <TextView
         android:id="@+id/textViewWowToken"
         android:layout_width="wrap_content"
@@ -21,7 +24,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar3" />
 
     <TextView
         android:id="@+id/wowTokenPrice"

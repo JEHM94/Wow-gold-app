@@ -10,4 +10,6 @@
     <string name="realm">Realm</string>
     <string name="name">Name</string>
     <string name="menu_logout">Log out.</string>
+    <string name="battletag_image">Battletag Image</string>
+    <string name="battletag">BATTLETAG</string>
 </resources>

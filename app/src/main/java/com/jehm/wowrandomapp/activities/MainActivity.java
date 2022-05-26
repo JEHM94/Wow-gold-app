@@ -70,7 +70,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static SharedPreferences sharedPreferences;
     private TextView textViewWowToken;
     private TextView textViewPrice;
+    private TextView textViewBattletag;
     private ImageView imageViewToken;
+    private ImageView imageViewBattletag;
     private ProgressBar progressBar;
     private Toolbar toolbar;
 
@@ -202,7 +204,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void bindUI() {
         textViewWowToken = (TextView) findViewById(R.id.textViewWowToken);
         textViewPrice = (TextView) findViewById(R.id.wowTokenPrice);
+        textViewBattletag = (TextView) findViewById(R.id.textViewBattletag);
         imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
+        imageViewBattletag = (ImageView) findViewById(R.id.imageViewBattletag);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -236,7 +240,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String json = responseBody.string();
                         JSONObject mJson = new JSONObject(json);
                         String battletag = mJson.getString("battletag");
-                        toolbar.setTitle(battletag);
+                        textViewBattletag.setText(battletag);
+                        imageViewBattletag.setImageResource(Utils.getBattletagImage(battletag));
+                        imageViewBattletag.setVisibility(View.VISIBLE);
                     } else {
                         System.out.println("Error trying to get user's Battletag");
                     }
