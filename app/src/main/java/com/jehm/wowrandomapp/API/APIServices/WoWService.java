@@ -19,8 +19,11 @@ public interface WoWService {
     @POST("token")
     Call<ResponseBody> getAccessToken(@Body RequestBody body);
 
+    //https://us.battle.net/oauth/userinfo?access_token=USDsY7WGubARLjOf0z2Poj6JR1c2gxwQEm
+    @GET("userinfo")
+    Call<ResponseBody> getBattletag(@Query("access_token") String access_token);
+
     //https://us.api.blizzard.com/data/wow/token/
-    // index?namespace=dynamic-us&locale=en_US&access_token=USU3vnnBeHYReiBefPweK0dBbox8LK8qDR
     @GET("data/wow/token/index")
     Call<WowToken> getWowTokenPrice(@Query("namespace") String namespace,
                                     @Query("locale") String locale,
@@ -36,8 +39,8 @@ public interface WoWService {
     //https://us.api.blizzard.com/profile/user/wow/protected-character/{realmId}-{characterId}
     @GET("profile/user/wow/protected-character/{realmId}-{characterId}")
     Call<Character> getCharacterMoney(@Path("realmId") int realmId,
-                                 @Path("characterId") int characterId,
-                                 @Query("namespace") String namespace,
-                                 @Query("locale") String locale,
-                                 @Query("access_token") String access_token);
+                                      @Path("characterId") int characterId,
+                                      @Query("namespace") String namespace,
+                                      @Query("locale") String locale,
+                                      @Query("access_token") String access_token);
 }

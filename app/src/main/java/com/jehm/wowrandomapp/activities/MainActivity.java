@@ -21,12 +21,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -42,10 +45,14 @@ import com.jehm.wowrandomapp.models.Character;
 import com.jehm.wowrandomapp.models.Utils;
 import com.jehm.wowrandomapp.models.WowToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import okhttp3.MultipartBody;
@@ -54,6 +61,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -63,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textViewPrice;
     private ImageView imageViewToken;
     private ProgressBar progressBar;
+    private Toolbar toolbar;
 
     private String accessToken;
     private String authCode;
@@ -81,8 +91,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Utils.transparentStatusBar(this);
         bindUI();
         getSharedPreferences();
+
         getWowTokenPrice();
         renderCharacterList();
+        getBattletag();
+
 
         textViewWowToken.setOnClickListener(this);
         textViewPrice.setOnClickListener(this);
@@ -92,6 +105,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         API.clearRetrofit();
         super.onStop();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        final int logout = R.id.menu_logout;
+        if (item.getItemId() == logout) {
+            Utils.removeSharedPreferences(sharedPreferences);
+            logOut();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void logOut() {
+        Intent intent = new Intent(this, SplashActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void renderCharacterList() {
@@ -131,8 +167,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     ArrayList<Character> tempArrayList = null;
                     for (int i = 0; i < wowAccountIDs.size(); i++) {
                         tempArrayList = new ArrayList<Character>();
-                        for (int x = 0; x < subLists.get(wowAccountIDs.get(i)).size(); x++ ){
-                            if(subLists.get(wowAccountIDs.get(i)).get(x).getMoney() >= 10000){
+                        for (int x = 0; x < subLists.get(wowAccountIDs.get(i)).size(); x++) {
+                            if (subLists.get(wowAccountIDs.get(i)).get(x).getMoney() >= 10000) {
                                 tempArrayList.add(subLists.get(wowAccountIDs.get(i)).get(x));
                             }
                         }
@@ -141,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
-                if (goldAdapters.size() > 0){
+                if (goldAdapters.size() > 0) {
                     GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
                     goldFragment.renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
                 } else {
@@ -168,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textViewPrice = (TextView) findViewById(R.id.wowTokenPrice);
         imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -186,6 +222,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putString("auth_token_type", auth_token_type);
         editor.putString("auth_expires_in", auth_expires_in);
         editor.apply();
+    }
+
+    private void getBattletag() {
+        WoWService service = API.getRetrofit(ACCESS_TOKEN_URL).create(WoWService.class);
+        int i = 0;
+        service.getBattletag(authAccessToken).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    if (response.body() != null) {
+                        ResponseBody responseBody = response.body();
+                        String json = responseBody.string();
+                        JSONObject mJson = new JSONObject(json);
+                        String battletag = mJson.getString("battletag");
+                        toolbar.setTitle(battletag);
+                    } else {
+                        System.out.println("Error trying to get user's Battletag");
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void getAuthAccessToken() {
@@ -287,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     imageViewToken.setVisibility(View.VISIBLE);
                     textViewPrice.setVisibility(View.VISIBLE);
                 } else {
-                    System.out.println("Error trying to get WoW Token price");
+                    Toast.makeText(MainActivity.this, "Error trying to get WoW Token price", Toast.LENGTH_LONG).show();
                 }
             }
 
