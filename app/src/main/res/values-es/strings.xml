@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">WoW Random App</string>
+    <string name="login_button">ENTRAR CON BATTLE.NET</string>
+    <string name="wow_token">Ficha WoW</string>
+    <string name="gold_fragment_tittle">Oro de Personajes</string>
+    <string name="WowTokenImage">Imagen Ficha WoW</string>
+    <string name="gold">Oro</string>
+    <string name="realm">Reino</string>
+    <string name="name">Nombre</string>
+    <string name="menu_logout">Desconectarse</string>
+    <string name="battletag_image">Imagen Battletag</string>
+    <string name="battletag">BATTLETAG</string>
+    <string name="retry">Reintentar…</string>
+</resources>
