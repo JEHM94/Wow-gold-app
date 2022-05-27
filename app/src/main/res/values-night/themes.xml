@@ -19,4 +19,11 @@
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
     <!--    Splash screen-->
+
+    <!-- Options menu Theme. -->
+    <style name="ThemeOverlay.MyPopupTheme" parent="Theme.MaterialComponents.Light">
+        <item name="android:background">@drawable/bg_gradient</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+    <!-- Options menu Theme. -->
 </resources>

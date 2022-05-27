@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/background_foreground"
+    android:background="@drawable/bg_gradient"
     android:paddingTop="10dp"
     tools:context="com.jehm.wowrandomapp.activities.MainActivity">
+
 
     <include
         android:id="@+id/toolbar3"
@@ -26,6 +27,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar3" />
 
+    <ImageView
+        android:id="@+id/imageViewToken"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:contentDescription="@string/WowTokenImage"
+        android:src="@mipmap/wowtoken_f"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/wowTokenPrice"
+        app:layout_constraintTop_toBottomOf="@+id/textViewWowToken" />
+
     <TextView
         android:id="@+id/wowTokenPrice"
         android:layout_width="wrap_content"
@@ -39,42 +50,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewWowToken" />
 
-    <ImageView
-        android:id="@+id/imageViewToken"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:contentDescription="@string/WowTokenImage"
-        android:src="@mipmap/wowtoken_f"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@+id/wowTokenPrice"
-        app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewWowToken" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/goldFragment"
-        android:name="com.jehm.wowrandomapp.fragments.GoldFragment"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wowTokenPrice"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout="@layout/fragment_gold" />
+        app:layout_constraintTop_toBottomOf="@+id/wowTokenPrice">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/goldFragment"
-        app:layout_constraintEnd_toEndOf="@+id/goldFragment"
-        app:layout_constraintStart_toStartOf="@+id/goldFragment"
-        app:layout_constraintTop_toTopOf="@+id/goldFragment" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/goldFragment"
+            android:name="com.jehm.wowrandomapp.fragments.GoldFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:layout="@layout/fragment_gold" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

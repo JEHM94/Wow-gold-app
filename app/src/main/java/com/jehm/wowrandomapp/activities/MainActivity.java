@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String authAccessToken;
     private String authAccessTokenExpiration;
 
+    private boolean isActive;
+
     private ArrayList<Character> characterArrayList = new ArrayList<>();
     private final ArrayList<Integer> wowAccountIDs = new ArrayList<>();
     private final Map<Integer, ArrayList<Character>> subLists = new HashMap<Integer, ArrayList<Character>>();
@@ -127,9 +129,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void logOut() {
+        isActive = false;
         Intent intent = new Intent(this, SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        finish();
     }
 
     private void renderCharacterList() {
@@ -151,39 +155,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //Do something after xx seconds
-                progressBar.setVisibility(View.INVISIBLE);
-                splitListPerID();
-                ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
+                if (isActive) {
+                    //Do something after xx seconds
+                    progressBar.setVisibility(View.INVISIBLE);
+                    splitListPerID();
+                    ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Predicate<Character> condition = character -> character.getMoney() < 10000;
-                    for (int i = 0; i < wowAccountIDs.size(); i++) {
-                        subLists.get(wowAccountIDs.get(i)).removeIf(condition);
-                        if (subLists.get(wowAccountIDs.get(i)).size() != 0) {
-                            goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, subLists.get(wowAccountIDs.get(i))));
-                        }
-                    }
-
-                } else {
-                    ArrayList<Character> tempArrayList = null;
-                    for (int i = 0; i < wowAccountIDs.size(); i++) {
-                        tempArrayList = new ArrayList<Character>();
-                        for (int x = 0; x < subLists.get(wowAccountIDs.get(i)).size(); x++) {
-                            if (subLists.get(wowAccountIDs.get(i)).get(x).getMoney() >= 10000) {
-                                tempArrayList.add(subLists.get(wowAccountIDs.get(i)).get(x));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Predicate<Character> condition = character -> character.getMoney() < 10000;
+                        for (int i = 0; i < wowAccountIDs.size(); i++) {
+                            subLists.get(wowAccountIDs.get(i)).removeIf(condition);
+                            if (subLists.get(wowAccountIDs.get(i)).size() != 0) {
+                                goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, subLists.get(wowAccountIDs.get(i))));
                             }
                         }
-                        if (tempArrayList.size() != 0) {
-                            goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, tempArrayList));
+
+                    } else {
+                        ArrayList<Character> tempArrayList = null;
+                        for (int i = 0; i < wowAccountIDs.size(); i++) {
+                            tempArrayList = new ArrayList<Character>();
+                            for (int x = 0; x < subLists.get(wowAccountIDs.get(i)).size(); x++) {
+                                if (subLists.get(wowAccountIDs.get(i)).get(x).getMoney() >= 10000) {
+                                    tempArrayList.add(subLists.get(wowAccountIDs.get(i)).get(x));
+                                }
+                            }
+                            if (tempArrayList.size() != 0) {
+                                goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, tempArrayList));
+                            }
                         }
                     }
-                }
-                if (goldAdapters.size() > 0) {
-                    GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
-                    goldFragment.renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
-                } else {
-                    Toast.makeText(MainActivity.this, "No characters found", Toast.LENGTH_LONG).show();
+                    if (goldAdapters.size() > 0) {
+                        GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
+                        goldFragment.renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
+                    } else {
+                        Toast.makeText(MainActivity.this, "No characters found", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }, 5000);
@@ -209,6 +215,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageViewBattletag = (ImageView) findViewById(R.id.imageViewBattletag);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        isActive = true;
         setSupportActionBar(toolbar);
     }
 
@@ -229,33 +237,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getBattletag() {
-        WoWService service = API.getRetrofit(ACCESS_TOKEN_URL).create(WoWService.class);
-        int i = 0;
-        service.getBattletag(authAccessToken).enqueue(new Callback<ResponseBody>() {
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    if (response.body() != null) {
-                        ResponseBody responseBody = response.body();
-                        String json = responseBody.string();
-                        JSONObject mJson = new JSONObject(json);
-                        String battletag = mJson.getString("battletag");
-                        textViewBattletag.setText(battletag);
-                        imageViewBattletag.setImageResource(Utils.getBattletagImage(battletag));
-                        imageViewBattletag.setVisibility(View.VISIBLE);
-                    } else {
-                        System.out.println("Error trying to get user's Battletag");
+            public void run() {
+                //Do something after xx seconds
+                WoWService service = API.getRetrofit(ACCESS_TOKEN_URL).create(WoWService.class);
+                service.getBattletag(authAccessToken).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        try {
+                            if (response.body() != null) {
+                                ResponseBody responseBody = response.body();
+                                String json = responseBody.string();
+                                JSONObject mJson = new JSONObject(json);
+                                String battletag = mJson.getString("battletag");
+                                textViewBattletag.setText(battletag);
+                                imageViewBattletag.setImageResource(Utils.getBattletagImage(battletag));
+                                imageViewBattletag.setVisibility(View.VISIBLE);
+                            } else {
+                                System.out.println("Error trying to get user's Battletag");
+                            }
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                t.printStackTrace();
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
             }
-        });
+        }, 1000);
     }
 
     private void getAuthAccessToken() {
@@ -354,10 +368,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (response.body() != null) {
                     WowToken wowToken = response.body();
                     textViewPrice.setText(formatPrice(wowToken.getPrice()));
+                    imageViewToken.setImageResource(R.mipmap.wowtoken_f);
                     imageViewToken.setVisibility(View.VISIBLE);
                     textViewPrice.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(MainActivity.this, "Error trying to get WoW Token price", Toast.LENGTH_LONG).show();
+                    textViewPrice.setText(R.string.retry);
+                    imageViewToken.setImageResource(R.drawable.ic_retry);
+                    textViewPrice.setVisibility(View.VISIBLE);
+                    imageViewToken.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -388,6 +407,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        getSharedPreferences();
         getWowTokenPrice();
     }
 }
