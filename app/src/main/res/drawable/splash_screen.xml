@@ -4,7 +4,7 @@
     <item
         android:drawable="@drawable/bg_gradient"/>
     <item
-        android:drawable="@mipmap/splash_image_foreground"
+        android:drawable="@mipmap/wowtoken_f"
         android:gravity="center"
         android:width="200dp"
         android:height="200dp"/>

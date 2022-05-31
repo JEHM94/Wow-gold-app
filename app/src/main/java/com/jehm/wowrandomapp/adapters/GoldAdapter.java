@@ -32,6 +32,10 @@ public class GoldAdapter extends BaseAdapter {
         this.characters = characters;
     }
 
+    public ArrayList<Character> getCharacters() {
+        return characters;
+    }
+
     @Override
     public int getCount() {
         return this.characters.size();

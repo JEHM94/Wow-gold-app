@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -29,9 +30,25 @@ public class GoldFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
+    private TextView headerGold;
+    private TextView headerRealm;
+    private TextView headerName;
+
+    private SortGoldListener callback;
 
     public GoldFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        try {
+            callback = (SortGoldListener) context;
+        }catch (Exception e){
+            throw new ClassCastException(context.toString() + "Should implement SortGoldListener");
+        }
     }
 
     @Override
@@ -41,6 +58,16 @@ public class GoldFragment extends Fragment {
 
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager2 = view.findViewById(R.id.viewPager);
+        headerGold = view.findViewById(R.id.textViewHeaderGold);
+        headerRealm = view.findViewById(R.id.textViewHeaderRealm);
+        headerName = view.findViewById(R.id.textViewHeaderName);
+
+        headerGold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callback.sortGold();
+            }
+        });
 
         return view;
     }
@@ -50,12 +77,16 @@ public class GoldFragment extends Fragment {
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                Character character = (Character) goldAdapters.get(position).getItem(0);
+                //Character character = (Character) goldAdapters.get(position).getItem(0);
+                Character character = goldAdapters.get(position).getCharacters().get(0);
                 int ID = character.getWowAccountID();
-                tab.setText("WoW " + (wowAccountIDs.indexOf(ID)+1));
+                tab.setText("WoW " + (wowAccountIDs.indexOf(ID) + 1));
             }
         });
         tabLayoutMediator.attach();
     }
 
+    public interface SortGoldListener{
+        void sortGold();
+    }
 }

@@ -50,7 +50,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -65,7 +69,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoldFragment.SortGoldListener {
 
     private static SharedPreferences sharedPreferences;
     private TextView textViewWowToken;
@@ -85,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ArrayList<Character> characterArrayList = new ArrayList<>();
     private final ArrayList<Integer> wowAccountIDs = new ArrayList<>();
-    private final Map<Integer, ArrayList<Character>> subLists = new HashMap<Integer, ArrayList<Character>>();
+    private final Map<Integer, ArrayList<Character>> subLists = new LinkedHashMap<Integer, ArrayList<Character>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -342,7 +346,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setCharacterMoney(int realmID, int characterID, int position) {
-        int rewr = 0;
         WoWService service = API.getRetrofitMoney(API_URL).create(WoWService.class);
         service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
@@ -410,4 +413,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getSharedPreferences();
         getWowTokenPrice();
     }
+
+
+    @Override
+    public void sortGold() {
+        Collections.sort(subLists.get(105914358), new Comparator<Character>() {
+            @Override
+            public int compare(Character character, Character t1) {
+                return String.valueOf(character.getMoney()).compareTo(String.valueOf(t1.getMoney()));
+            }
+        });
+    }
 }
+
+
