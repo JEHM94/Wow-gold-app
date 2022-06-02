@@ -47,4 +47,35 @@ public class Utils {
                 return R.mipmap.profile_battlenet_background;
         }
     }
+
+    public static String[] renderMoney(String money) {
+        String[] goldSilverBronze;
+        String[] silverBronze;
+        String[] wowGoldFormat = new String[3];
+        if (money.length() >= 8) {
+            goldSilverBronze = splitPrice(money, money.length() - 4);
+            silverBronze = splitPrice(goldSilverBronze[1], 2);
+            wowGoldFormat[0] = goldSilverBronze[0];
+            wowGoldFormat[1] = silverBronze[0];
+            wowGoldFormat[2] = silverBronze[1];
+        } else if (money.length() == 7) {
+            goldSilverBronze = splitPrice(money, 3);
+            silverBronze = splitPrice(goldSilverBronze[1], 2);
+            wowGoldFormat[0] = goldSilverBronze[0];
+            wowGoldFormat[1] = silverBronze[0];
+            wowGoldFormat[2] = silverBronze[1] + goldSilverBronze[2];
+        } else if (money.length() == 6) {
+            goldSilverBronze = splitPrice(money, 2);
+            wowGoldFormat[0] = goldSilverBronze[0];
+            wowGoldFormat[1] = goldSilverBronze[1];
+            wowGoldFormat[2] = goldSilverBronze[2];
+        }else  { // money.lenght() == 5
+            goldSilverBronze = splitPrice(money, 3);
+            silverBronze = splitPrice(goldSilverBronze[0], 1);
+            wowGoldFormat[0] = silverBronze[0];
+            wowGoldFormat[1] = silverBronze[1]+silverBronze[2];
+            wowGoldFormat[2] = goldSilverBronze[1];
+        }
+        return wowGoldFormat;
+    }
 }

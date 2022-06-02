@@ -4,8 +4,6 @@
     <string name="wow_token">WoW Token</string>
     <string name="gold_fragment_tittle">Character\'s Gold</string>
     <string name="WowTokenImage">WoW Token Image</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="gold">Gold</string>
     <string name="realm">Realm</string>
     <string name="name">Name</string>
@@ -13,4 +11,5 @@
     <string name="battletag_image">Battletag Image</string>
     <string name="battletag">BATTLETAG</string>
     <string name="retry">Retry…</string>
+    <string name="total_gold">Total Gold</string>
 </resources>

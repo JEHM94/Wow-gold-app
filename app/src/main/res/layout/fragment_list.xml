@@ -1,14 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".fragments.ListFragment">
 
     <ListView
         android:id="@+id/listViewGold"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="90"
         android:paddingTop="5dp" />
 
-</FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="37"
+            android:orientation="horizontal"
+            android:paddingTop="5dp">
+
+            <TextView
+                android:id="@+id/textViewTotalGold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="65"
+                android:text="999,999"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageViewGold"
+                android:layout_width="15dp"
+                android:layout_height="20dp"
+                android:contentDescription="@string/WowTokenImage"
+                android:src="@mipmap/gold_icon_f" />
+
+            <!--Para oro > 999,999
+            android:textSize="12sp"-->
+
+            <!--Para oro > 9,999,999
+            android:textSize="11sp"-->
+
+
+            <TextView
+                android:id="@+id/textViewTotalSilver"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="20"
+                android:text="99"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageViewSilver"
+                android:layout_width="15dp"
+                android:layout_height="20dp"
+                android:contentDescription="@string/WowTokenImage"
+                android:src="@mipmap/silver_icon_f" />
+
+
+            <TextView
+                android:id="@+id/textViewTotalBronze"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="20"
+                android:text="99"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageViewBronze"
+                android:layout_width="15dp"
+                android:layout_height="20dp"
+                android:contentDescription="@string/WowTokenImage"
+                android:src="@mipmap/bronze_icon_f" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="29" />
+
+        <TextView
+            android:id="@+id/textViewTotalName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="31"
+            android:paddingStart="2dp"
+            android:text="@string/total_gold"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

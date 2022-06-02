@@ -11,4 +11,5 @@
     <string name="battletag_image">Imagen Battletag</string>
     <string name="battletag">BATTLETAG</string>
     <string name="retry">Reintentar…</string>
+    <string name="total_gold">Oro Total</string>
 </resources>

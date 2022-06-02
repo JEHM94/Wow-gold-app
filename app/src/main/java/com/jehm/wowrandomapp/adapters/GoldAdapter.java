@@ -22,13 +22,11 @@ import java.util.Objects;
 
 public class GoldAdapter extends BaseAdapter {
 
-    private Context context;
-    private int layout;
+    private final Context context;
     private ArrayList<Character> characters;
 
-    public GoldAdapter(Context context, int layout, final ArrayList<Character> characters) {
+    public GoldAdapter(Context context, final ArrayList<Character> characters) {
         this.context = context;
-        this.layout = layout;
         this.characters = characters;
     }
 
@@ -76,7 +74,7 @@ public class GoldAdapter extends BaseAdapter {
         String realm = characters.get(positon).getRealmName();
         String characterClass = characters.get(positon).getCharacterClass();
         String money = String.valueOf(characters.get(positon).getMoney());
-        String[] moneyArray = renderMoney(money);
+        String[] moneyArray = Utils.renderMoney(money);
         String gold = new DecimalFormat("#,###.##").format(Integer.parseInt(moneyArray[0]));
         String silver = moneyArray[1];
         String bronze = moneyArray[2];
@@ -159,50 +157,18 @@ public class GoldAdapter extends BaseAdapter {
         }
     }
 
-    private String[] renderMoney(String money) {
-        String[] goldSilverBronze;
-        String[] silverBronze;
-        String[] wowGoldFormat = new String[3];
-        if (money.length() >= 8) {
-            goldSilverBronze = Utils.splitPrice(money, money.length() - 4);
-            silverBronze = Utils.splitPrice(goldSilverBronze[1], 2);
-            wowGoldFormat[0] = goldSilverBronze[0];
-            wowGoldFormat[1] = silverBronze[0];
-            wowGoldFormat[2] = silverBronze[1];
-        } else if (money.length() == 7) {
-            goldSilverBronze = Utils.splitPrice(money, 3);
-            silverBronze = Utils.splitPrice(goldSilverBronze[1], 2);
-            wowGoldFormat[0] = goldSilverBronze[0];
-            wowGoldFormat[1] = silverBronze[0];
-            wowGoldFormat[2] = silverBronze[1] + goldSilverBronze[2];
-        } else if (money.length() == 6) {
-            goldSilverBronze = Utils.splitPrice(money, 2);
-            wowGoldFormat[0] = goldSilverBronze[0];
-            wowGoldFormat[1] = goldSilverBronze[1];
-            wowGoldFormat[2] = goldSilverBronze[2];
-        }else  { // money.lenght() == 5
-            goldSilverBronze = Utils.splitPrice(money, 3);
-            silverBronze = Utils.splitPrice(goldSilverBronze[0], 1);
-            wowGoldFormat[0] = silverBronze[0];
-            wowGoldFormat[1] = silverBronze[1]+silverBronze[2];
-            wowGoldFormat[2] = goldSilverBronze[1];
-        }
-        return wowGoldFormat;
-    }
-
-    private void setGoldTextSize(ViewHolder viewHolder, String gold){
+    private void setGoldTextSize(ViewHolder viewHolder, String gold) {
 //        <!--Para oro >= 1,000,000
 //        android:textSize="12sp"-->
 //        <!--Para oro >= 10,000,000
 //        android:textSize="11sp"-->
-        if(Integer.parseInt(gold) >= 1000000 && Integer.parseInt(gold) < 10000000){
+        if (Integer.parseInt(gold) >= 1000000 && Integer.parseInt(gold) < 10000000) {
             viewHolder.textViewGold.setTextSize(12);
-        } else if(Integer.parseInt(gold) >= 10000000){
+        } else if (Integer.parseInt(gold) >= 10000000) {
             viewHolder.textViewGold.setTextSize(11);
         } else {
             viewHolder.textViewGold.setTextSize(14);
         }
-
     }
 
     static class ViewHolder {

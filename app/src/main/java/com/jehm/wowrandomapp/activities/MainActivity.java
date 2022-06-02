@@ -50,13 +50,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import okhttp3.MultipartBody;
@@ -65,8 +62,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoldFragment.SortGoldListener {
@@ -86,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String authAccessTokenExpiration;
 
     private boolean isActive;
+    private boolean isAscendant = true;
+
+    private final int goldColumn = R.string.gold;
+    private final int realmColumn = R.string.realm;
 
     private ArrayList<Character> characterArrayList = new ArrayList<>();
     private final ArrayList<Integer> wowAccountIDs = new ArrayList<>();
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, 1700);
     }
 
-    private void cleanAndShowList() {
+    private void cleanList() {
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         for (int i = 0; i < wowAccountIDs.size(); i++) {
                             subLists.get(wowAccountIDs.get(i)).removeIf(condition);
                             if (subLists.get(wowAccountIDs.get(i)).size() != 0) {
-                                goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, subLists.get(wowAccountIDs.get(i))));
+                                goldAdapters.add(new GoldAdapter(MainActivity.this, subLists.get(wowAccountIDs.get(i))));
                             }
                         }
 
@@ -184,19 +183,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
                             }
                             if (tempArrayList.size() != 0) {
-                                goldAdapters.add(new GoldAdapter(MainActivity.this, R.layout.character_gold_layout, tempArrayList));
+                                goldAdapters.add(new GoldAdapter(MainActivity.this, tempArrayList));
                             }
                         }
                     }
-                    if (goldAdapters.size() > 0) {
-                        GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
-                        goldFragment.renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
-                    } else {
-                        Toast.makeText(MainActivity.this, "No characters found", Toast.LENGTH_LONG).show();
-                    }
+                    showList(goldAdapters);
                 }
             }
         }, 5000);
+    }
+
+    private void showList(ArrayList<GoldAdapter> goldAdapters) {
+        if (goldAdapters.size() > 0) {
+            GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
+            goldFragment.renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
+        } else {
+            Toast.makeText(MainActivity.this, "No characters found", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void splitListPerID() {
@@ -328,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (int i = 0; i < characterArrayList.size(); i++) {
                         setCharacterMoney(characterArrayList.get(i).getRealmID(), characterArrayList.get(i).getCharacterID(), i);
                     }
-                    cleanAndShowList();
+                    cleanList();
                 } else if (response.raw().message().equals("Unauthorized")) {
                     Toast.makeText(context, "Token expired. Please Log in again.", Toast.LENGTH_LONG).show();
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -416,13 +419,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     @Override
-    public void sortGold() {
-        Collections.sort(subLists.get(105914358), new Comparator<Character>() {
-            @Override
-            public int compare(Character character, Character t1) {
-                return String.valueOf(character.getMoney()).compareTo(String.valueOf(t1.getMoney()));
+    public void sortList(int column) {
+        ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
+
+        if (wowAccountIDs.size() > 0) {
+            for (int i = 0; i < wowAccountIDs.size(); i++) {
+                if (subLists.get(wowAccountIDs.get(i)).size() > 0) {
+                    Collections.sort(subLists.get(wowAccountIDs.get(i)), new Comparator<Character>() {
+                        @Override
+                        public int compare(Character character, Character t1) {
+                            if (isAscendant) {
+                                switch (column) {
+                                    case goldColumn:
+                                        return Long.compare(t1.getMoney(), character.getMoney());
+                                    case realmColumn:
+                                        return t1.getRealmName().compareTo(character.getRealmName());
+                                    default:
+                                        return t1.getCharacterName().compareTo(character.getCharacterName());
+                                }
+                            } else {
+                                switch (column) {
+                                    case goldColumn:
+                                        return Long.compare(character.getMoney(), t1.getMoney());
+                                    case realmColumn:
+                                        return character.getRealmName().compareTo(t1.getRealmName());
+                                    default:
+                                        return character.getCharacterName().compareTo(t1.getCharacterName());
+                                }
+                            }
+                        }
+                    });
+                    goldAdapters.add(new GoldAdapter(MainActivity.this, subLists.get(wowAccountIDs.get(i))));
+                }
             }
-        });
+            //Simplified if(isAscendant)  isAscendant = false ; else isAscendant = true;
+            isAscendant = !isAscendant;
+            showList(goldAdapters);
+        }
+
     }
 }
 

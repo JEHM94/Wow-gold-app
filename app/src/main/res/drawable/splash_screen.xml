@@ -6,7 +6,7 @@
     <item
         android:drawable="@mipmap/wowtoken_f"
         android:gravity="center"
-        android:width="200dp"
-        android:height="200dp"/>
+        android:width="150dp"
+        android:height="150dp"/>
 
 </layer-list>

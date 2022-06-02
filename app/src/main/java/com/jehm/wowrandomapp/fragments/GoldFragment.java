@@ -8,12 +8,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
@@ -24,7 +21,6 @@ import com.jehm.wowrandomapp.adapters.ViewPagerAdapter;
 import com.jehm.wowrandomapp.models.Character;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class GoldFragment extends Fragment {
 
@@ -65,7 +61,19 @@ public class GoldFragment extends Fragment {
         headerGold.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callback.sortGold();
+                callback.sortList(R.string.gold);
+            }
+        });
+        headerRealm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callback.sortList(R.string.realm);
+            }
+        });
+        headerName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callback.sortList(R.string.name);
             }
         });
 
@@ -87,6 +95,6 @@ public class GoldFragment extends Fragment {
     }
 
     public interface SortGoldListener{
-        void sortGold();
+        void sortList(int column);
     }
 }
