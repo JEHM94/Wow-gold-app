@@ -5,13 +5,15 @@
       <map>
         <entry key="..\:/GitHub/Carries/app/src/main/res/drawable-v23/splash_screen.xml" value="0.2145" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/drawable/bg_gradient.xml" value="0.2145" />
+        <entry key="..\:/GitHub/Carries/app/src/main/res/drawable/ic_baseline_arrow_drop_down_24.xml" value="0.2105" />
+        <entry key="..\:/GitHub/Carries/app/src/main/res/drawable/ic_baseline_arrow_drop_up_24.xml" value="0.2105" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/drawable/roundshapebtn.xml" value="0.132" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/drawable/splash_screen.xml" value="0.2145" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/activity_splash.xml" value="0.22735507246376813" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/character_gold_layout.xml" value="0.33" />
-        <entry key="..\:/GitHub/Carries/app/src/main/res/layout/fragment_gold.xml" value="0.25" />
+        <entry key="..\:/GitHub/Carries/app/src/main/res/layout/fragment_gold.xml" value="0.1" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/fragment_list.xml" value="0.24365942028985507" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/splash_screen.xml" value="0.24365942028985507" />
         <entry key="..\:/GitHub/Carries/app/src/main/res/layout/toolbar.xml" value="0.33" />

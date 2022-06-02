@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="29"
-        android:paddingStart="20dp"
+        android:paddingStart="25dp"
         android:paddingEnd="10dp"
         android:text="Area 52"
         android:textColor="@color/character_gold_layout"

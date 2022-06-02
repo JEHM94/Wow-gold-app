@@ -12,4 +12,5 @@
     <string name="battletag">BATTLETAG</string>
     <string name="retry">Retry…</string>
     <string name="total_gold">Total Gold</string>
+    <string name="image_sort_gold">Image Sort Gold</string>
 </resources>

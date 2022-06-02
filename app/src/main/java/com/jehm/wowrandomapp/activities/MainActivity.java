@@ -1,6 +1,8 @@
 package com.jehm.wowrandomapp.activities;
 
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 import static com.jehm.wowrandomapp.constants.Constants.ACCESS_TOKEN_URL;
 import static com.jehm.wowrandomapp.constants.Constants.API_URL;
 import static com.jehm.wowrandomapp.constants.Constants.CLIENT_ID;
@@ -72,8 +74,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textViewBattletag;
     private ImageView imageViewToken;
     private ImageView imageViewBattletag;
+    private ImageView imageViewSortGold;
+    private ImageView imageViewSortRealm;
+    private ImageView imageViewSortName;
     private ProgressBar progressBar;
-    private Toolbar toolbar;
 
     private String accessToken;
     private String authCode;
@@ -160,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 if (isActive) {
                     //Do something after xx seconds
-                    progressBar.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(INVISIBLE);
                     splitListPerID();
                     ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
 
@@ -221,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
         imageViewBattletag = (ImageView) findViewById(R.id.imageViewBattletag);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         isActive = true;
         setSupportActionBar(toolbar);
@@ -261,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 String battletag = mJson.getString("battletag");
                                 textViewBattletag.setText(battletag);
                                 imageViewBattletag.setImageResource(Utils.getBattletagImage(battletag));
-                                imageViewBattletag.setVisibility(View.VISIBLE);
+                                imageViewBattletag.setVisibility(VISIBLE);
                             } else {
                                 System.out.println("Error trying to get user's Battletag");
                             }
@@ -375,14 +379,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     WowToken wowToken = response.body();
                     textViewPrice.setText(formatPrice(wowToken.getPrice()));
                     imageViewToken.setImageResource(R.mipmap.wowtoken_f);
-                    imageViewToken.setVisibility(View.VISIBLE);
-                    textViewPrice.setVisibility(View.VISIBLE);
+                    imageViewToken.setVisibility(VISIBLE);
+                    textViewPrice.setVisibility(VISIBLE);
                 } else {
                     Toast.makeText(MainActivity.this, "Error trying to get WoW Token price", Toast.LENGTH_LONG).show();
                     textViewPrice.setText(R.string.retry);
                     imageViewToken.setImageResource(R.drawable.ic_retry);
-                    textViewPrice.setVisibility(View.VISIBLE);
-                    imageViewToken.setVisibility(View.VISIBLE);
+                    textViewPrice.setVisibility(VISIBLE);
+                    imageViewToken.setVisibility(VISIBLE);
                 }
             }
 
@@ -421,7 +425,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void sortList(int column) {
         ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
-
+        if (imageViewSortGold == null || imageViewSortRealm == null || imageViewSortName == null) {
+            imageViewSortGold = findViewById(R.id.imageViewSortGold);
+            imageViewSortRealm = findViewById(R.id.imageViewSortRealm);
+            imageViewSortName = findViewById(R.id.imageViewSortName);
+        }
+        //************************
+        // Hacer goldAdapters Global para utilizar la lista ya limpia
+        // listaLimpia = goldAdapters.getCharacters()
+        // sustituir for (int i = 0; i < wowAccountIDs.size(); i++) {
+        // por       for (int i = 0; i < goldAdapters.size(); i++) {
+        //************************
         if (wowAccountIDs.size() > 0) {
             for (int i = 0; i < wowAccountIDs.size(); i++) {
                 if (subLists.get(wowAccountIDs.get(i)).size() > 0) {
@@ -431,21 +445,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (isAscendant) {
                                 switch (column) {
                                     case goldColumn:
+                                        setSortImage(true, column);
                                         return Long.compare(t1.getMoney(), character.getMoney());
                                     case realmColumn:
+                                        setSortImage(true, column);
                                         return t1.getRealmName().compareTo(character.getRealmName());
                                     default:
+                                        setSortImage(true, column);
                                         return t1.getCharacterName().compareTo(character.getCharacterName());
                                 }
                             } else {
                                 switch (column) {
                                     case goldColumn:
+                                        setSortImage(false, column);
                                         return Long.compare(character.getMoney(), t1.getMoney());
                                     case realmColumn:
+                                        setSortImage(false, column);
                                         return character.getRealmName().compareTo(t1.getRealmName());
                                     default:
+                                        setSortImage(false, column);
                                         return character.getCharacterName().compareTo(t1.getCharacterName());
                                 }
+                            }
+                        }
+
+                        private void setSortImage(boolean isAscendant, int column) {
+                            int imageSrc = (isAscendant) ? R.drawable.ic_baseline_arrow_drop_down_24 : R.drawable.ic_baseline_arrow_drop_up_24;
+                            switch (column) {
+                                case goldColumn:
+                                    imageViewSortGold.setImageResource(imageSrc);
+                                    imageViewSortGold.setVisibility(VISIBLE);
+                                    imageViewSortRealm.setVisibility(INVISIBLE);
+                                    imageViewSortName.setVisibility(INVISIBLE);
+                                    break;
+                                case realmColumn:
+                                    imageViewSortRealm.setImageResource(imageSrc);
+                                    imageViewSortRealm.setVisibility(VISIBLE);
+                                    imageViewSortGold.setVisibility(INVISIBLE);
+                                    imageViewSortName.setVisibility(INVISIBLE);
+                                    break;
+                                default:
+                                    imageViewSortName.setImageResource(imageSrc);
+                                    imageViewSortName.setVisibility(VISIBLE);
+                                    imageViewSortGold.setVisibility(INVISIBLE);
+                                    imageViewSortRealm.setVisibility(INVISIBLE);
+                                    break;
                             }
                         }
                     });
@@ -456,7 +500,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isAscendant = !isAscendant;
             showList(goldAdapters);
         }
-
     }
 }
 
