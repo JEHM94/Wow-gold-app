@@ -23,7 +23,7 @@ import java.util.Objects;
 public class GoldAdapter extends BaseAdapter {
 
     private final Context context;
-    private ArrayList<Character> characters;
+    private final ArrayList<Character> characters;
 
     public GoldAdapter(Context context, final ArrayList<Character> characters) {
         this.context = context;

@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ArrayList<Character> characterArrayList = new ArrayList<>();
     private final ArrayList<Integer> wowAccountIDs = new ArrayList<>();
+    private final ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
     private final Map<Integer, ArrayList<Character>> subLists = new LinkedHashMap<Integer, ArrayList<Character>>();
 
     @Override
@@ -107,54 +108,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         renderCharacterList();
         getBattletag();
 
-
         textViewWowToken.setOnClickListener(this);
         textViewPrice.setOnClickListener(this);
     }
 
-    @Override
-    protected void onStop() {
-        API.clearRetrofit();
-        super.onStop();
+    private void bindUI() {
+        textViewWowToken = (TextView) findViewById(R.id.textViewWowToken);
+        textViewPrice = (TextView) findViewById(R.id.wowTokenPrice);
+        textViewBattletag = (TextView) findViewById(R.id.textViewBattletag);
+        imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
+        imageViewBattletag = (ImageView) findViewById(R.id.imageViewBattletag);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        isActive = true;
+        setSupportActionBar(toolbar);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int logout = R.id.menu_logout;
-        if (item.getItemId() == logout) {
-            Utils.removeSharedPreferences(sharedPreferences);
-            logOut();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void logOut() {
-        isActive = false;
-        Intent intent = new Intent(this, SplashActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-
-    private void renderCharacterList() {
-        if (authAccessToken.isEmpty() || authAccessTokenExpiration.equals("Expired")) {
-            getAuthAccessToken();
-        }
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after xx seconds
-                getCharactersInfo(MainActivity.this);
+    private void splitListPerID() {
+        for (Character character : characterArrayList) {
+            ArrayList<Character> tempList = subLists.get(character.getWowAccountID());
+            if (tempList == null) {
+                tempList = new ArrayList<Character>();
+                subLists.put(character.getWowAccountID(), tempList);
             }
-        }, 1700);
+            tempList.add(character);
+        }
+        wowAccountIDs.addAll(subLists.keySet());
     }
 
     private void cleanList() {
@@ -166,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //Do something after xx seconds
                     progressBar.setVisibility(INVISIBLE);
                     splitListPerID();
-                    ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         Predicate<Character> condition = character -> character.getMoney() < 10000;
@@ -206,45 +185,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void splitListPerID() {
-        for (Character character : characterArrayList) {
-            ArrayList<Character> tempList = subLists.get(character.getWowAccountID());
-            if (tempList == null) {
-                tempList = new ArrayList<Character>();
-                subLists.put(character.getWowAccountID(), tempList);
-            }
-            tempList.add(character);
+    private void renderCharacterList() {
+        if (authAccessToken.isEmpty() || authAccessTokenExpiration.equals("Expired")) {
+            getAuthAccessToken();
         }
-        wowAccountIDs.addAll(subLists.keySet());
-    }
-
-    private void bindUI() {
-        textViewWowToken = (TextView) findViewById(R.id.textViewWowToken);
-        textViewPrice = (TextView) findViewById(R.id.wowTokenPrice);
-        textViewBattletag = (TextView) findViewById(R.id.textViewBattletag);
-        imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
-        imageViewBattletag = (ImageView) findViewById(R.id.imageViewBattletag);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        isActive = true;
-        setSupportActionBar(toolbar);
-    }
-
-    private void getSharedPreferences() {
-        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        accessToken = sharedPreferences.getString("accessToken", "");
-        authCode = sharedPreferences.getString("authCode", "");
-        authAccessToken = sharedPreferences.getString("authAccessToken", "");
-        authAccessTokenExpiration = sharedPreferences.getString("auth_expires_in", "");
-    }
-
-    private static void saveOnPreferences(String authAccessToken, String auth_token_type, String auth_expires_in) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("authAccessToken", authAccessToken);
-        editor.putString("auth_token_type", auth_token_type);
-        editor.putString("auth_expires_in", auth_expires_in);
-        editor.apply();
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after xx seconds
+                getCharactersInfo(MainActivity.this);
+            }
+        }, 1700);
     }
 
     private void getBattletag() {
@@ -403,6 +355,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return gold[0] + "," + gold[1];
     }
 
+    private void getSharedPreferences() {
+        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        accessToken = sharedPreferences.getString("accessToken", "");
+        authCode = sharedPreferences.getString("authCode", "");
+        authAccessToken = sharedPreferences.getString("authAccessToken", "");
+        authAccessTokenExpiration = sharedPreferences.getString("auth_expires_in", "");
+    }
+
+    private static void saveOnPreferences(String authAccessToken, String auth_token_type, String auth_expires_in) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("authAccessToken", authAccessToken);
+        editor.putString("auth_token_type", auth_token_type);
+        editor.putString("auth_expires_in", auth_expires_in);
+        editor.apply();
+    }
+
     private void login() {
         String loginURL = LOGIN_CODE_URL
                 + "authorize?client_id=" + CLIENT_ID
@@ -415,31 +383,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
+    private void logOut() {
+        isActive = false;
+        Intent intent = new Intent(this, SplashActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public void onClick(View view) {
         getSharedPreferences();
         getWowTokenPrice();
     }
 
-
     @Override
     public void sortList(int column) {
-        ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
+        ArrayList<GoldAdapter> newAdapters = new ArrayList<>();
         if (imageViewSortGold == null || imageViewSortRealm == null || imageViewSortName == null) {
             imageViewSortGold = findViewById(R.id.imageViewSortGold);
             imageViewSortRealm = findViewById(R.id.imageViewSortRealm);
             imageViewSortName = findViewById(R.id.imageViewSortName);
         }
-        //************************
-        // Hacer goldAdapters Global para utilizar la lista ya limpia
-        // listaLimpia = goldAdapters.getCharacters()
-        // sustituir for (int i = 0; i < wowAccountIDs.size(); i++) {
-        // por       for (int i = 0; i < goldAdapters.size(); i++) {
-        //************************
         if (wowAccountIDs.size() > 0) {
-            for (int i = 0; i < wowAccountIDs.size(); i++) {
-                if (subLists.get(wowAccountIDs.get(i)).size() > 0) {
-                    Collections.sort(subLists.get(wowAccountIDs.get(i)), new Comparator<Character>() {
+            for (int i = 0; i < goldAdapters.size(); i++) {
+                ArrayList<Character> characters = goldAdapters.get(i).getCharacters();
+                if (characters.size() > 0) {
+                    Collections.sort(characters, new Comparator<Character>() {
                         @Override
                         public int compare(Character character, Character t1) {
                             if (isAscendant) {
@@ -493,13 +463,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         }
                     });
-                    goldAdapters.add(new GoldAdapter(MainActivity.this, subLists.get(wowAccountIDs.get(i))));
+                    newAdapters.add(new GoldAdapter(MainActivity.this, characters));
                 }
             }
             //Simplified if(isAscendant)  isAscendant = false ; else isAscendant = true;
             isAscendant = !isAscendant;
-            showList(goldAdapters);
+            showList(newAdapters);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        API.clearRetrofit();
+        super.onStop();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        final int logout = R.id.menu_logout;
+        if (item.getItemId() == logout) {
+            Utils.removeSharedPreferences(sharedPreferences);
+            logOut();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 
