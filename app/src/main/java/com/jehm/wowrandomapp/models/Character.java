@@ -3,16 +3,16 @@ package com.jehm.wowrandomapp.models;
 import java.util.ArrayList;
 
 public class Character {
-    private int wowAccountID;
+    private final int wowAccountID;
 
-    private String characterName;
-    private int characterID;
+    private final String characterName;
+    private final int characterID;
 
-    private String realmName;
-    private int realmID;
+    private final String realmName;
+    private final int realmID;
 
-    private String faction;
-    private String characterClass;
+    private final String faction;
+    private final String characterClass;
     private long money;
 
     private ArrayList<Character> characterList;
@@ -40,56 +40,28 @@ public class Character {
         return wowAccountID;
     }
 
-    public void setWowAccountID(int wowAccountID) {
-        this.wowAccountID = wowAccountID;
-    }
-
     public String getCharacterName() {
         return characterName;
-    }
-
-    public void setCharacterName(String characterName) {
-        this.characterName = characterName;
     }
 
     public int getCharacterID() {
         return characterID;
     }
 
-    public void setCharacterID(int characterID) {
-        this.characterID = characterID;
-    }
-
     public String getRealmName() {
         return realmName;
-    }
-
-    public void setRealmName(String realmName) {
-        this.realmName = realmName;
     }
 
     public int getRealmID() {
         return realmID;
     }
 
-    public void setRealmID(int realmID) {
-        this.realmID = realmID;
-    }
-
     public String getFaction() {
         return faction;
     }
 
-    public void setFaction(String faction) {
-        this.faction = faction;
-    }
-
     public String getCharacterClass() {
         return characterClass;
-    }
-
-    public void setCharacterClass(String characterClass) {
-        this.characterClass = characterClass;
     }
 
     public long getMoney() {

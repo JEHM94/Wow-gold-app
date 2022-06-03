@@ -1,7 +1,7 @@
 package com.jehm.wowrandomapp.models;
 
 public class WowToken {
-    private String price;
+    private final String price;
 
     public WowToken(String price) {
         this.price = price;
@@ -11,7 +11,4 @@ public class WowToken {
         return price;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
-    }
 }

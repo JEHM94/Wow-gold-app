@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
-    private ArrayList<GoldAdapter> goldAdapters;
+    private final ArrayList<GoldAdapter> goldAdapters;
 
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity, ArrayList<GoldAdapter> goldAdapters) {
         super(fragmentActivity);

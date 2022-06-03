@@ -26,9 +26,6 @@ public class GoldFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
-    private TextView headerGold;
-    private TextView headerRealm;
-    private TextView headerName;
 
     private SortGoldListener callback;
 
@@ -43,7 +40,7 @@ public class GoldFragment extends Fragment {
         try {
             callback = (SortGoldListener) context;
         }catch (Exception e){
-            throw new ClassCastException(context.toString() + "Should implement SortGoldListener");
+            throw new ClassCastException(context + "Should implement SortGoldListener");
         }
     }
 
@@ -54,42 +51,23 @@ public class GoldFragment extends Fragment {
 
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager2 = view.findViewById(R.id.viewPager);
-        headerGold = view.findViewById(R.id.textViewHeaderGold);
-        headerRealm = view.findViewById(R.id.textViewHeaderRealm);
-        headerName = view.findViewById(R.id.textViewHeaderName);
+        TextView headerGold = view.findViewById(R.id.textViewHeaderGold);
+        TextView headerRealm = view.findViewById(R.id.textViewHeaderRealm);
+        TextView headerName = view.findViewById(R.id.textViewHeaderName);
 
-        headerGold.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callback.sortList(R.string.gold);
-            }
-        });
-        headerRealm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callback.sortList(R.string.realm);
-            }
-        });
-        headerName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callback.sortList(R.string.name);
-            }
-        });
+        headerGold.setOnClickListener(view1 -> callback.sortList(R.string.gold));
+        headerRealm.setOnClickListener(view12 -> callback.sortList(R.string.realm));
+        headerName.setOnClickListener(view13 -> callback.sortList(R.string.name));
 
         return view;
     }
 
     public void renderListFragment(FragmentActivity fragmentActivity, ArrayList<GoldAdapter> goldAdapters, ArrayList<Integer> wowAccountIDs) {
         viewPager2.setAdapter(new ViewPagerAdapter(fragmentActivity, goldAdapters));
-        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                //Character character = (Character) goldAdapters.get(position).getItem(0);
-                Character character = goldAdapters.get(position).getCharacters().get(0);
-                int ID = character.getWowAccountID();
-                tab.setText("WoW " + (wowAccountIDs.indexOf(ID) + 1));
-            }
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
+            Character character = goldAdapters.get(position).getCharacters().get(0);
+            int ID = character.getWowAccountID();
+            tab.setText("WoW " + (wowAccountIDs.indexOf(ID) + 1));
         });
         tabLayoutMediator.attach();
     }

@@ -56,10 +56,10 @@ public class ListFragment extends Fragment {
     }
 
     private void bindUI(View view) {
-        listView = (ListView) view.findViewById(R.id.listViewGold);
-        textViewTotalGold = (TextView) view.findViewById(R.id.textViewTotalGold);
-        textViewTotalSilver = (TextView) view.findViewById(R.id.textViewTotalSilver);
-        textViewTotalBronze = (TextView) view.findViewById(R.id.textViewTotalBronze);
+        listView = view.findViewById(R.id.listViewGold);
+        textViewTotalGold = view.findViewById(R.id.textViewTotalGold);
+        textViewTotalSilver = view.findViewById(R.id.textViewTotalSilver);
+        textViewTotalBronze = view.findViewById(R.id.textViewTotalBronze);
     }
 
     private String getTotalMoney() {

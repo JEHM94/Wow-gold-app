@@ -5,20 +5,18 @@ import static com.jehm.wowrandomapp.constants.Constants.CLIENT_ID;
 import static com.jehm.wowrandomapp.constants.Constants.CLIENT_SECRET;
 import static com.jehm.wowrandomapp.constants.Constants.GRANT_TYPE;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
 
 import com.jehm.wowrandomapp.API.API;
 import com.jehm.wowrandomapp.API.APIServices.WoWService;
-import com.jehm.wowrandomapp.R;
 import com.jehm.wowrandomapp.models.AccessToken;
 import com.google.gson.Gson;
-import com.jehm.wowrandomapp.models.Utils;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -27,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -138,7 +137,7 @@ public class SplashActivity extends AppCompatActivity {
         service.getAccessToken(requestBody)
                 .enqueue(new Callback<ResponseBody>() {
                              @Override
-                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                  ResponseBody responseBody = response.body();
                                  Gson gson = new Gson();
                                  AccessToken accessToken = null;
@@ -148,7 +147,7 @@ public class SplashActivity extends AppCompatActivity {
                                      } catch (IOException e) {
                                          e.printStackTrace();
                                      }
-                                     String token = accessToken.getAccess_token();
+                                     String token = Objects.requireNonNull(accessToken).getAccess_token();
                                      String token_type = accessToken.getToken_type();
                                      int expires_in = accessToken.getExpires_in();
                                      String expirationDate = setTokenExpirationDate();
@@ -157,7 +156,7 @@ public class SplashActivity extends AppCompatActivity {
                              }
 
                              @Override
-                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                                  t.printStackTrace();
                              }
                          }

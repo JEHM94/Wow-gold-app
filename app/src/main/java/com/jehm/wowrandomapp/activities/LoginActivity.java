@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.jehm.wowrandomapp.R;
-import com.jehm.wowrandomapp.constants.Constants;
 import com.jehm.wowrandomapp.models.Utils;
 
 
@@ -33,7 +32,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Utils.transparentStatusBar(this);
 
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        Button buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        Button buttonLogin = findViewById(R.id.buttonLogin);
         buttonLogin.setOnClickListener(this);
 
         getAuthCode();

@@ -58,12 +58,12 @@ public class GoldAdapter extends BaseAdapter {
             LayoutInflater layoutInflater = LayoutInflater.from(this.context);
             convertView = layoutInflater.inflate(R.layout.character_gold_layout, null);
             viewHolder = new ViewHolder();
-            viewHolder.textViewName = (TextView) convertView.findViewById(R.id.textViewName);
-            viewHolder.textViewFaction = (TextView) convertView.findViewById(R.id.textViewFaction);
-            viewHolder.textViewRealm = (TextView) convertView.findViewById(R.id.textViewRealm);
-            viewHolder.textViewBronze = (TextView) convertView.findViewById(R.id.textViewBronze);
-            viewHolder.textViewSilver = (TextView) convertView.findViewById(R.id.textViewSilver);
-            viewHolder.textViewGold = (TextView) convertView.findViewById(R.id.textViewGold);
+            viewHolder.textViewName = convertView.findViewById(R.id.textViewName);
+            viewHolder.textViewFaction = convertView.findViewById(R.id.textViewFaction);
+            viewHolder.textViewRealm = convertView.findViewById(R.id.textViewRealm);
+            viewHolder.textViewBronze = convertView.findViewById(R.id.textViewBronze);
+            viewHolder.textViewSilver = convertView.findViewById(R.id.textViewSilver);
+            viewHolder.textViewGold = convertView.findViewById(R.id.textViewGold);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();

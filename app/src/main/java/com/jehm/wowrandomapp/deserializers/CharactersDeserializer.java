@@ -17,11 +17,7 @@ public class CharactersDeserializer implements JsonDeserializer<Character> {
         int character_i = 0;
 
         ArrayList<Character> characterList = new ArrayList<>();
-
-
         int wowAccountsLength = json.getAsJsonObject().get("wow_accounts").getAsJsonArray().size();
-        //json.getAsJsonObject().get("wow_accounts").getAsJsonArray().size() = 2
-        //json.getAsJsonObject().get("wow_accounts").getAsJsonArray().get(account_i).getAsJsonObject().get("characters").getAsJsonArray().size() = 29
         while (account_i < wowAccountsLength) {
             int wowAccountID = json
                     .getAsJsonObject().get("wow_accounts")
@@ -76,17 +72,13 @@ public class CharactersDeserializer implements JsonDeserializer<Character> {
 
                 Character character = new Character(wowAccountID, characterName, characterID, realmName, realmID, faction, characterClass, 0);
                 characterList.add(character);
-
-
                 character_i++;
             }
             character_i = 0;
             account_i++;
         }
-
         Character character = new Character(0, "characterName", 0, "realmName", 0, "faction", "characterClass", 0);
         character.setCharacterList(characterList);
-
         return character;
     }
 }
