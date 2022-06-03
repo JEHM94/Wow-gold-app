@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WoW Random App</string>
+    <string name="app_name">WoW Gold App</string>
     <string name="login_button">ENTRAR CON BATTLE.NET</string>
     <string name="wow_token">Ficha WoW</string>
     <string name="gold_fragment_tittle">Oro de Personajes</string>
@@ -12,4 +12,5 @@
     <string name="battletag">BATTLETAG</string>
     <string name="retry">Reintentar…</string>
     <string name="total_gold">Oro Total</string>
+    <string name="image_sort_gold">Imagen Ordenar Oro</string>
 </resources>
