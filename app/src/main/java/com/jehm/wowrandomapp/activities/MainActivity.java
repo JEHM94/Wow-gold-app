@@ -56,6 +56,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import okhttp3.MultipartBody;
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Character> characterArrayList = new ArrayList<>();
     private final ArrayList<Integer> wowAccountIDs = new ArrayList<>();
     private final ArrayList<GoldAdapter> goldAdapters = new ArrayList<>();
-    private final Map<Integer, ArrayList<Character>> subLists = new LinkedHashMap<Integer, ArrayList<Character>>();
+    private final Map<Integer, ArrayList<Character>> subLists = new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,13 +114,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void bindUI() {
-        textViewWowToken = (TextView) findViewById(R.id.textViewWowToken);
-        textViewPrice = (TextView) findViewById(R.id.wowTokenPrice);
-        textViewBattletag = (TextView) findViewById(R.id.textViewBattletag);
-        imageViewToken = (ImageView) findViewById(R.id.imageViewToken);
-        imageViewBattletag = (ImageView) findViewById(R.id.imageViewBattletag);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        textViewWowToken = findViewById(R.id.textViewWowToken);
+        textViewPrice = findViewById(R.id.wowTokenPrice);
+        textViewBattletag = findViewById(R.id.textViewBattletag);
+        imageViewToken = findViewById(R.id.imageViewToken);
+        imageViewBattletag = findViewById(R.id.imageViewBattletag);
+        progressBar = findViewById(R.id.progressBar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         isActive = true;
         setSupportActionBar(toolbar);
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (Character character : characterArrayList) {
             ArrayList<Character> tempList = subLists.get(character.getWowAccountID());
             if (tempList == null) {
-                tempList = new ArrayList<Character>();
+                tempList = new ArrayList<>();
                 subLists.put(character.getWowAccountID(), tempList);
             }
             tempList.add(character);
@@ -139,39 +140,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void cleanList() {
         final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isActive) {
-                    //Do something after xx seconds
-                    progressBar.setVisibility(INVISIBLE);
-                    splitListPerID();
+        handler.postDelayed(() -> {
+            if (isActive) {
+                //Do something after xx seconds
+                progressBar.setVisibility(INVISIBLE);
+                splitListPerID();
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        Predicate<Character> condition = character -> character.getMoney() < 10000;
-                        for (int i = 0; i < wowAccountIDs.size(); i++) {
-                            subLists.get(wowAccountIDs.get(i)).removeIf(condition);
-                            if (subLists.get(wowAccountIDs.get(i)).size() != 0) {
-                                goldAdapters.add(new GoldAdapter(MainActivity.this, subLists.get(wowAccountIDs.get(i))));
-                            }
-                        }
-
-                    } else {
-                        ArrayList<Character> tempArrayList = null;
-                        for (int i = 0; i < wowAccountIDs.size(); i++) {
-                            tempArrayList = new ArrayList<Character>();
-                            for (int x = 0; x < subLists.get(wowAccountIDs.get(i)).size(); x++) {
-                                if (subLists.get(wowAccountIDs.get(i)).get(x).getMoney() >= 10000) {
-                                    tempArrayList.add(subLists.get(wowAccountIDs.get(i)).get(x));
-                                }
-                            }
-                            if (tempArrayList.size() != 0) {
-                                goldAdapters.add(new GoldAdapter(MainActivity.this, tempArrayList));
-                            }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Predicate<Character> condition = character -> character.getMoney() < 10000;
+                    for (int i = 0; i < wowAccountIDs.size(); i++) {
+                        Objects.requireNonNull(subLists.get(wowAccountIDs.get(i))).removeIf(condition);
+                        if (Objects.requireNonNull(subLists.get(wowAccountIDs.get(i))).size() != 0) {
+                            goldAdapters.add(new GoldAdapter(MainActivity.this, subLists.get(wowAccountIDs.get(i))));
                         }
                     }
-                    showList(goldAdapters);
+
+                } else {
+                    ArrayList<Character> tempArrayList;
+                    for (int i = 0; i < wowAccountIDs.size(); i++) {
+                        tempArrayList = new ArrayList<>();
+                        for (int x = 0; x < Objects.requireNonNull(subLists.get(wowAccountIDs.get(i))).size(); x++) {
+                            if (Objects.requireNonNull(subLists.get(wowAccountIDs.get(i))).get(x).getMoney() >= 10000) {
+                                tempArrayList.add(Objects.requireNonNull(subLists.get(wowAccountIDs.get(i))).get(x));
+                            }
+                        }
+                        if (tempArrayList.size() != 0) {
+                            goldAdapters.add(new GoldAdapter(MainActivity.this, tempArrayList));
+                        }
+                    }
                 }
+                showList(goldAdapters);
             }
         }, 5000);
     }
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showList(ArrayList<GoldAdapter> goldAdapters) {
         if (goldAdapters.size() > 0) {
             GoldFragment goldFragment = (GoldFragment) getSupportFragmentManager().findFragmentById(R.id.goldFragment);
-            goldFragment.renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
+            Objects.requireNonNull(goldFragment).renderListFragment(MainActivity.this, goldAdapters, wowAccountIDs);
         } else {
             Toast.makeText(MainActivity.this, "No characters found", Toast.LENGTH_LONG).show();
         }
@@ -190,48 +188,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getAuthAccessToken();
         }
         final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after xx seconds
-                getCharactersInfo(MainActivity.this);
-            }
+        handler.postDelayed(() -> {
+            //Do something after xx seconds
+            getCharactersInfo(MainActivity.this);
         }, 1700);
     }
 
     private void getBattletag() {
         final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after xx seconds
-                WoWService service = API.getRetrofit(ACCESS_TOKEN_URL).create(WoWService.class);
-                service.getBattletag(authAccessToken).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        try {
-                            if (response.body() != null) {
-                                ResponseBody responseBody = response.body();
-                                String json = responseBody.string();
-                                JSONObject mJson = new JSONObject(json);
-                                String battletag = mJson.getString("battletag");
-                                textViewBattletag.setText(battletag);
-                                imageViewBattletag.setImageResource(Utils.getBattletagImage(battletag));
-                                imageViewBattletag.setVisibility(VISIBLE);
-                            } else {
-                                System.out.println("Error trying to get user's Battletag");
-                            }
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
+        handler.postDelayed(() -> {
+            //Do something after xx seconds
+            WoWService service = API.getRetrofit(ACCESS_TOKEN_URL).create(WoWService.class);
+            service.getBattletag(authAccessToken).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                    try {
+                        if (response.body() != null) {
+                            ResponseBody responseBody = response.body();
+                            String json = responseBody.string();
+                            JSONObject mJson = new JSONObject(json);
+                            String battletag = mJson.getString("battletag");
+                            textViewBattletag.setText(battletag);
+                            imageViewBattletag.setImageResource(Utils.getBattletagImage(battletag));
+                            imageViewBattletag.setVisibility(VISIBLE);
+                        } else {
+                            System.out.println("Error trying to get user's Battletag");
                         }
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        t.printStackTrace();
-                    }
-                });
-            }
+                @Override
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                    t.printStackTrace();
+                }
+            });
         }, 1000);
     }
 
@@ -251,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         service.getAccessToken(requestBody)
                 .enqueue(new Callback<ResponseBody>() {
                              @Override
-                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                  ResponseBody responseBody = response.body();
                                  Gson gson = new Gson();
                                  AccessToken accessToken = null;
@@ -261,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                      } catch (IOException e) {
                                          e.printStackTrace();
                                      }
-                                     authAccessToken = accessToken.getAccess_token();
+                                     authAccessToken = Objects.requireNonNull(accessToken).getAccess_token();
                                      String auth_token_type = accessToken.getToken_type();
                                      String auth_expires_in = String.valueOf(accessToken.getExpires_in());
                                      saveOnPreferences(authAccessToken, auth_token_type, auth_expires_in);
@@ -269,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                              }
 
                              @Override
-                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                                  t.printStackTrace();
                              }
                          }
@@ -280,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         WoWService service = API.getRetrofitCharacter(API_URL).create(WoWService.class);
         service.getCharacters(PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
-            public void onResponse(Call<Character> call, Response<Character> response) {
+            public void onResponse(@NonNull Call<Character> call, @NonNull Response<Character> response) {
                 if (response.body() != null) {
                     Character character = response.body();
                     characterArrayList = character.getCharacterList();
@@ -298,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onFailure(Call<Character> call, Throwable t) {
+            public void onFailure(@NonNull Call<Character> call, @NonNull Throwable t) {
                 t.printStackTrace();
             }
         });
@@ -308,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         WoWService service = API.getRetrofitMoney(API_URL).create(WoWService.class);
         service.getCharacterMoney(realmID, characterID, PROFILE_NAMESPACE, LOCALE, authAccessToken).enqueue(new Callback<Character>() {
             @Override
-            public void onResponse(Call<Character> call, Response<Character> response) {
+            public void onResponse(@NonNull Call<Character> call, @NonNull Response<Character> response) {
                 if (response.body() != null) {
                     Character character = response.body();
                     characterArrayList.get(position).setMoney(character.getMoney());
@@ -316,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onFailure(Call<Character> call, Throwable t) {
+            public void onFailure(@NonNull Call<Character> call, @NonNull Throwable t) {
                 t.printStackTrace();
             }
         });
@@ -326,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         WoWService service = API.getRetrofit(API_URL).create(WoWService.class);
         service.getWowTokenPrice(DYNAMIC_NAMESPACE, LOCALE, accessToken).enqueue(new Callback<WowToken>() {
             @Override
-            public void onResponse(Call<WowToken> call, Response<WowToken> response) {
+            public void onResponse(@NonNull Call<WowToken> call, @NonNull Response<WowToken> response) {
                 if (response.body() != null) {
                     WowToken wowToken = response.body();
                     textViewPrice.setText(formatPrice(wowToken.getPrice()));
@@ -343,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onFailure(Call<WowToken> call, Throwable t) {
+            public void onFailure(@NonNull Call<WowToken> call, @NonNull Throwable t) {
                 t.printStackTrace();
             }
         });
